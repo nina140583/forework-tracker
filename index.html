@@ -524,18 +524,32 @@ async function saveHolidayStatus(date,val){
 
 // ── EMAIL TEMPLATES ───────────────────────────────────────────────────────
 const TPL_VERSION='v2';
-function loadTemplates(){
-  var sv=localStorage.getItem('fw_tpl_version');
-  if(sv!==TPL_VERSION){
-    templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
-    saveTemplates();
-    localStorage.setItem('fw_tpl_version',TPL_VERSION);
+async function loadTemplates(){
+  var rows=await sbLoad('templates');
+  if(rows.length>0){
+    var vrow=rows.find(function(r){return r.key==='version';});
+    var drow=rows.find(function(r){return r.key==='data';});
+    if(vrow&&vrow.value===TPL_VERSION&&drow){
+      try{templates=JSON.parse(drow.value);}catch(e){templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));}
+    } else {
+      templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+      await saveTemplates(rows);
+    }
   } else {
-    templates=lload('fw_templates',null);
-    if(!templates)templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+    templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+    await saveTemplates([]);
   }
 }
-function saveTemplates(){lsave('fw_templates',templates);localStorage.setItem('fw_tpl_version',TPL_VERSION);}
+async function saveTemplates(existingRows){
+  if(existingRows===undefined){existingRows=await sbLoad('templates');}
+  var vrow=existingRows.find(function(r){return r.key==='version';});
+  var drow=existingRows.find(function(r){return r.key==='data';});
+  var dataStr=JSON.stringify(templates);
+  if(vrow){await sbUpdate('templates',vrow._id,{key:'version',value:TPL_VERSION});}
+  else{await sbInsert('templates',{key:'version',value:TPL_VERSION});}
+  if(drow){await sbUpdate('templates',drow._id,{key:'data',value:dataStr});}
+  else{await sbInsert('templates',{key:'data',value:dataStr});}
+}
 function renderTemplates(){
   document.getElementById('templates-container').innerHTML=templates.map((t,i)=>`
     <div class="tpl-card">
@@ -605,20 +619,35 @@ function toggleCheck(i){
 function resetChecklist(){lsave('fw_cl_'+today(),[]);renderChecklist();}
 
 // ── FAQ ───────────────────────────────────────────────────────────────────
-const FAQ_VERSION='v4'; // bump this when DEFAULT_FAQ changes
-function loadFaq(){
-  var storedVersion=localStorage.getItem('fw_faq_version');
-  if(storedVersion!==FAQ_VERSION){
-    // New version detected — reset to latest DEFAULT_FAQ
-    faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
-    saveFaq();
-    localStorage.setItem('fw_faq_version',FAQ_VERSION);
+const FAQ_VERSION='v4';
+async function loadFaq(){
+  var rows=await sbLoad('faq');
+  if(rows.length>0){
+    // Check version
+    var vrow=rows.find(function(r){return r.key==='version';});
+    var drow=rows.find(function(r){return r.key==='data';});
+    if(vrow&&vrow.value===FAQ_VERSION&&drow){
+      try{faqData=JSON.parse(drow.value);}catch(e){faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));}
+    } else {
+      // New version - reset
+      faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
+      await saveFaq(rows);
+    }
   } else {
-    faqData=lload('fw_faq',null);
-    if(!faqData)faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
+    faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
+    await saveFaq([]);
   }
 }
-function saveFaq(){lsave('fw_faq',faqData);localStorage.setItem('fw_faq_version',FAQ_VERSION);}
+async function saveFaq(existingRows){
+  if(existingRows===undefined){existingRows=await sbLoad('faq');}
+  var vrow=existingRows.find(function(r){return r.key==='version';});
+  var drow=existingRows.find(function(r){return r.key==='data';});
+  var dataStr=JSON.stringify(faqData);
+  if(vrow){await sbUpdate('faq',vrow._id,{key:'version',value:FAQ_VERSION});}
+  else{await sbInsert('faq',{key:'version',value:FAQ_VERSION});}
+  if(drow){await sbUpdate('faq',drow._id,{key:'data',value:dataStr});}
+  else{await sbInsert('faq',{key:'data',value:dataStr});}
+}
 function resetFaq(){
   if(!confirm('Reset FAQ to default? All edits will be lost.'))return;
   faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
@@ -879,20 +908,20 @@ async function init(){
 
   clients=await sbLoad('clients');
 
-  // Reseed clients cleanly
-  for(let i=0;i<clients.length;i++){await sbDelete('clients',clients[i]._id);}
-  clients=[];
-  for(let j=0;j<DEFAULT_CLIENTS.length;j++){
-    const saved=await sbInsert('clients',DEFAULT_CLIENTS[j]);
-    if(saved)clients.push(saved);
+  // Only seed if empty (first time setup)
+  if(clients.length===0){
+    for(let j=0;j<DEFAULT_CLIENTS.length;j++){
+      const saved=await sbInsert('clients',DEFAULT_CLIENTS[j]);
+      if(saved)clients.push(saved);
+    }
   }
 
   setSyncStatus('ok','Connected');
   renderClients();
   await renderHolidays();
-  loadTemplates();renderTemplates();
+  await loadTemplates();renderTemplates();
   renderChecklist();
-  loadFaq();renderFaqFilters();renderFaq();
+  await loadFaq();renderFaqFilters();renderFaq();
 
   document.getElementById('edit-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
   document.getElementById('tpl-modal').addEventListener('click',function(e){if(e.target===this)closeTplModal();});
@@ -900,9 +929,9 @@ async function init(){
     console.error('Init error:',e);
     setSyncStatus('err','Error: '+e.message);
     // Still load local data even if Supabase fails
-    loadTemplates();renderTemplates();
+    templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));renderTemplates();
     renderChecklist();
-    loadFaq();renderFaqFilters();renderFaq();
+    faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));renderFaqFilters();renderFaq();
   }
 }
 init();
