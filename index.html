@@ -377,7 +377,7 @@ const DEFAULT_FAQ=[
 ];
 
 // ── STATE ─────────────────────────────────────────────────────────────────
-let clients=[], faqData=[], templates=[], clientFilter='all', faqCatFilter='all';
+let clients=[], faqData=[], templates=[], settings=[], clientFilter='all', faqCatFilter='all';
 
 // ── SUPABASE HELPERS ──────────────────────────────────────────────────────
 function setSyncStatus(state,msg){
@@ -525,30 +525,23 @@ async function saveHolidayStatus(date,val){
 // ── EMAIL TEMPLATES ───────────────────────────────────────────────────────
 const TPL_VERSION='v2';
 async function loadTemplates(){
-  var rows=await sbLoad('templates');
-  if(rows.length>0){
-    var vrow=rows.find(function(r){return r.key==='version';});
-    var drow=rows.find(function(r){return r.key==='data';});
-    if(vrow&&vrow.value===TPL_VERSION&&drow){
-      try{templates=JSON.parse(drow.value);}catch(e){templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));}
-    } else {
-      templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
-      await saveTemplates(rows);
-    }
+  var rows=await sbLoad('settings');
+  var row=rows.find(function(r){return r.key==='tpl_'+TPL_VERSION;});
+  if(row){
+    try{templates=JSON.parse(row.value);}
+    catch(e){templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));}
   } else {
     templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
-    await saveTemplates([]);
+    await saveTemplates();
   }
 }
-async function saveTemplates(existingRows){
-  if(existingRows===undefined){existingRows=await sbLoad('templates');}
-  var vrow=existingRows.find(function(r){return r.key==='version';});
-  var drow=existingRows.find(function(r){return r.key==='data';});
-  var dataStr=JSON.stringify(templates);
-  if(vrow){await sbUpdate('templates',vrow._id,{key:'version',value:TPL_VERSION});}
-  else{await sbInsert('templates',{key:'version',value:TPL_VERSION});}
-  if(drow){await sbUpdate('templates',drow._id,{key:'data',value:dataStr});}
-  else{await sbInsert('templates',{key:'data',value:dataStr});}
+async function saveTemplates(){
+  var rows=await sbLoad('settings');
+  var key='tpl_'+TPL_VERSION;
+  var row=rows.find(function(r){return r.key===key;});
+  var val=JSON.stringify(templates);
+  if(row){await sbUpdate('settings',row._id,{key:key,value:val});}
+  else{await sbInsert('settings',{key:key,value:val});}
 }
 function renderTemplates(){
   document.getElementById('templates-container').innerHTML=templates.map((t,i)=>`
@@ -906,7 +899,7 @@ async function init(){
   document.getElementById('today-header').textContent=todayLabel();
   document.getElementById('checklist-date').textContent=todayLabel();
 
-  clients=await sbLoad('clients');
+  [clients]=await Promise.all([sbLoad('clients')]);
 
   // Only seed if empty (first time setup)
   if(clients.length===0){
