@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forework Payroll Tracker</title>
+<title>Forework Operations Hub</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:Arial,sans-serif;font-size:13px;background:#f4f6fb;color:#1a1a2e;}
 header{background:#1F3864;color:white;padding:13px 22px;display:flex;justify-content:space-between;align-items:center;}
 header h1{font-size:16px;font-weight:700;}
-header span{font-size:11px;opacity:.7;}
 #sync-status{font-size:11px;padding:3px 10px;border-radius:99px;margin-left:12px;}
 .sync-ok{background:#dcfce7;color:#166534;}
 .sync-saving{background:#fef3c7;color:#92400e;}
@@ -20,10 +19,6 @@ nav button{background:none;border:none;color:rgba(255,255,255,.75);padding:9px 1
 nav button.active,nav button:hover{background:rgba(255,255,255,.18);color:white;}
 .page{display:none;padding:16px 20px;}
 .page.active{display:block;}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px;}
-.metric{background:white;border-radius:8px;padding:11px 14px;border:1px solid #e0e7f0;}
-.metric-label{font-size:11px;color:#888;margin-bottom:3px;}
-.metric-val{font-size:19px;font-weight:700;color:#1F3864;}
 table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:14px;}
 th{background:#2E5FA3;color:white;padding:8px 10px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
 td{padding:7px 10px;border-bottom:1px solid #eef2f8;vertical-align:middle;}
@@ -33,24 +28,33 @@ tr:hover td{background:#f5f8ff;}
 .badge-mon{background:#dbeafe;color:#1e40af;}
 .badge-tue{background:#ede9fe;color:#5b21b6;}
 .badge-wed{background:#dcfce7;color:#166534;}
-select,input[type=text],input[type=date],input[type=number],input[type=time],textarea{border:1px solid #d1d5db;border-radius:5px;padding:5px 8px;font-size:12px;font-family:Arial;width:100%;background:white;}
+select,input[type=text],input[type=date],input[type=number],textarea{border:1px solid #d1d5db;border-radius:5px;padding:5px 8px;font-size:12px;font-family:Arial;width:100%;background:white;}
 textarea{resize:vertical;min-height:60px;}
 select:focus,input:focus,textarea:focus{outline:2px solid #2E5FA3;border-color:transparent;}
-.s-done{background:#dcfce7;color:#166534;font-weight:600;border-radius:99px;padding:2px 8px;font-size:11px;}
-.s-pending{background:#fef3c7;color:#92400e;font-weight:600;border-radius:99px;padding:2px 8px;font-size:11px;}
-.s-late{background:#fee2e2;color:#991b1b;font-weight:600;border-radius:99px;padding:2px 8px;font-size:11px;}
-.s-open{background:#fef3c7;color:#92400e;font-weight:600;border-radius:99px;padding:2px 8px;font-size:11px;}
-.s-inprogress{background:#dbeafe;color:#1e40af;font-weight:600;border-radius:99px;padding:2px 8px;font-size:11px;}
-.s-resolved{background:#dcfce7;color:#166534;font-weight:600;border-radius:99px;padding:2px 8px;font-size:11px;}
 .btn{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600;}
 .btn-primary{background:#2E5FA3;color:white;}.btn-primary:hover{background:#1F3864;}
 .btn-danger{background:#fee2e2;color:#991b1b;}
 .btn-green{background:#dcfce7;color:#166534;}
 .btn-amber{background:#fef3c7;color:#92400e;}
 .btn-sm{padding:3px 8px;font-size:11px;}
+.form-card{background:white;border-radius:8px;border:1px solid #e0e7f0;padding:14px;margin-bottom:13px;}
+.form-card-title{font-size:13px;font-weight:700;color:#1F3864;margin-bottom:10px;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;}
+.form-group label{display:block;font-size:11px;color:#555;margin-bottom:3px;font-weight:600;}
 .toolbar{display:flex;gap:7px;margin-bottom:11px;align-items:center;flex-wrap:wrap;}
 .filter-btn{background:white;border:1px solid #d1d5db;border-radius:99px;padding:3px 12px;font-size:12px;cursor:pointer;font-family:Arial;}
 .filter-btn.active{background:#2E5FA3;color:white;border-color:#2E5FA3;}
+.metric{background:white;border-radius:8px;padding:11px 14px;border:1px solid #e0e7f0;}
+.metric-label{font-size:11px;color:#888;margin-bottom:3px;}
+.metric-val{font-size:19px;font-weight:700;color:#1F3864;}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:white;border-radius:12px;padding:20px;width:90%;max-width:560px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:15px;font-weight:700;color:#1F3864;margin-bottom:14px;}
+.hol-card{background:white;border:1px solid #e0e7f0;border-radius:8px;padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.hol-date{font-size:12px;font-weight:700;color:#1F3864;min-width:90px;}
+.hol-name{font-size:13px;font-weight:500;flex:1;}
 .checklist-item{display:flex;gap:9px;align-items:flex-start;background:white;border-radius:8px;padding:11px 14px;margin-bottom:7px;border:1px solid #e0e7f0;}
 .checklist-item input[type=checkbox]{margin-top:2px;width:15px;height:15px;flex-shrink:0;accent-color:#2E5FA3;}
 .checklist-item label{flex:1;cursor:pointer;}
@@ -59,72 +63,71 @@ select:focus,input:focus,textarea:focus{outline:2px solid #2E5FA3;border-color:t
 .checklist-item.checked label{text-decoration:line-through;opacity:.4;}
 .time-badge{background:#1F3864;color:white;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:700;flex-shrink:0;min-width:56px;text-align:center;}
 .time-badge.warn{background:#dc2626;}
-.disc-neg{color:#dc2626;font-weight:700;}
-.disc-zero{color:#166534;font-weight:700;}
-.form-card{background:white;border-radius:8px;border:1px solid #e0e7f0;padding:14px;margin-bottom:13px;}
-.form-card-title{font-size:13px;font-weight:700;color:#1F3864;margin-bottom:10px;}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;}
-.form-group label{display:block;font-size:11px;color:#555;margin-bottom:3px;font-weight:600;}
-.today-badge{background:#2E5FA3;color:white;border-radius:4px;padding:2px 6px;font-size:11px;margin-left:5px;}
-.map-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:11px;}
-.person-card{background:white;border-radius:10px;border:1px solid #e0e7f0;overflow:hidden;}
-.ph-nina{border-top:3px solid #3b82f6;}.ph-luka{border-top:3px solid #22c55e;}
-.ph-nedim{border-top:3px solid #f59e0b;}.ph-sinisa{border-top:3px solid #8b5cf6;}
-.ph-new{border-top:3px solid #94a3b8;}
-.person-header{padding:10px 13px;display:flex;align-items:center;gap:9px;}
-.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
-.av-nina{background:#dbeafe;color:#1e40af;}.av-luka{background:#dcfce7;color:#166534;}
-.av-nedim{background:#fef3c7;color:#92400e;}.av-sinisa{background:#ede9fe;color:#5b21b6;}
-.av-new{background:#f1f5f9;color:#64748b;}
-.person-name{font-weight:700;font-size:13px;}.person-role{font-size:11px;color:#888;}
-.person-body{padding:0 13px 11px;}
-.assign-tag{display:inline-flex;align-items:center;gap:3px;background:#eef4fb;color:#1e40af;border-radius:5px;font-size:11px;padding:2px 6px;margin:2px 2px 2px 0;}
-.assign-tag.module{background:#f3f0ff;color:#5b21b6;}
-.assign-tag .rm{cursor:pointer;opacity:.6;font-size:10px;}.assign-tag .rm:hover{opacity:1;}
-.assign-label{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin:7px 0 3px;font-weight:600;}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}
-.modal-bg.open{display:flex;}
-.modal{background:white;border-radius:12px;padding:20px;width:90%;max-width:560px;max-height:90vh;overflow-y:auto;}
-.modal-title{font-size:15px;font-weight:700;color:#1F3864;margin-bottom:14px;}
-.hol-card{background:white;border:1px solid #e0e7f0;border-radius:8px;padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
-.hol-date{font-size:12px;font-weight:700;color:#1F3864;min-width:90px;}
-.hol-name{font-size:13px;font-weight:500;flex:1;}
+/* FAQ */
+
+/* Screenshots in FAQ */
+.faq-screenshots{margin-top:10px;}
+.faq-screenshot-img{max-width:100%;border-radius:6px;border:1px solid #e0e7f0;margin-top:6px;display:block;}
+.screenshot-thumb{position:relative;display:inline-block;margin:4px 4px 4px 0;}
+.screenshot-thumb img{max-width:200px;max-height:130px;border-radius:5px;border:1px solid #e0e7f0;cursor:pointer;display:block;}
+.screenshot-thumb .rm-img{position:absolute;top:-5px;right:-5px;background:#dc2626;color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.img-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;align-items:center;justify-content:center;}
+.img-modal-bg.open{display:flex;}
+.img-modal-bg img{max-width:90vw;max-height:90vh;border-radius:8px;}
+
+.faq-section{background:white;border-radius:10px;border:1px solid #e0e7f0;margin-bottom:14px;overflow:hidden;}
+.faq-section-header{background:#f0f4ff;padding:11px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e0e7f0;}
+.faq-section-title{font-size:13px;font-weight:700;color:#1F3864;}
+.faq-item{border-bottom:1px solid #f0f4ff;}
+.faq-item:last-child{border-bottom:none;}
+.faq-q{padding:10px 16px;display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer;gap:10px;user-select:none;}
+.faq-q:hover{background:#fafbff;}
+.faq-q-text{font-size:12px;font-weight:700;color:#2E5FA3;flex:1;}
+.faq-q-actions{display:flex;gap:5px;flex-shrink:0;}
+.faq-a{padding:0 16px 12px;font-size:12px;color:#333;line-height:1.7;display:none;}
+.faq-a.open{display:block;}
+.faq-edit-panel{display:none;padding:10px 16px 14px;background:#f8faff;border-top:1px solid #eef2f8;}
+.faq-edit-panel.open{display:block;}
+.faq-warn{background:#fef2f2;border-left:3px solid #dc2626;padding:6px 10px;border-radius:0 5px 5px 0;margin-bottom:8px;font-size:11px;color:#991b1b;font-weight:600;}
+.faq-search input{font-size:13px;padding:8px 12px;border-radius:8px;margin-bottom:14px;}
+/* Templates */
+.tpl-card{background:white;border:1px solid #e0e7f0;border-radius:8px;margin-bottom:12px;overflow:hidden;}
+.tpl-header{background:#f8faff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eef2f8;gap:8px;}
+.tpl-body{padding:12px 14px;}
 </style>
 </head>
 <body>
 <header>
   <div style="display:flex;align-items:center">
-    <h1>Forework Payroll Tracker</h1>
+    <h1>Forework Operations Hub</h1>
     <span id="sync-status" class="sync-ok">Connected</span>
   </div>
   <span id="today-header"></span>
 </header>
 <nav>
   <button class="active" onclick="showPage('clients',this)">Clients</button>
-  <button onclick="showPage('daily',this)">Daily Tracker</button>
-  <button onclick="showPage('wire',this)">Wire Log</button>
-  <button onclick="showPage('returned',this)">Returned Deposits</button>
-  <button onclick="showPage('support',this)">IT Support Log</button>
-  <button onclick="showPage('map',this)">Assignment Map</button>
   <button onclick="showPage('holidays',this)">Holiday Calendar</button>
   <button onclick="showPage('templates',this)">Email Templates</button>
   <button onclick="showPage('checklist',this)">Checklist</button>
+  <button onclick="showPage('faq',this)">FAQ</button>
 </nav>
 
+<!-- EDIT CLIENT MODAL -->
 <div class="modal-bg" id="edit-modal">
   <div class="modal">
-    <div class="modal-title">Edit client</div>
+    <div class="modal-title">Edit Client</div>
     <input type="hidden" id="edit-id">
     <div class="form-grid" style="margin-bottom:10px">
       <div class="form-group"><label>Client name</label><input type="text" id="edit-name"></div>
       <div class="form-group"><label>Employees</label><input type="text" id="edit-emp"></div>
-      <div class="form-group"><label>Payroll day(s)</label><input type="text" id="edit-days" placeholder="Monday, Tuesday..."></div>
+      <div class="form-group"><label>Payroll day(s)</label><input type="text" id="edit-days"></div>
       <div class="form-group"><label>Pay date</label><input type="text" id="edit-paydate"></div>
       <div class="form-group"><label>Frequency</label><select id="edit-freq"><option>Weekly</option><option>Bi-weekly</option><option>Weekly + Bi-weekly</option><option>Monthly</option></select></div>
       <div class="form-group"><label>System</label><select id="edit-system"><option>UKG</option><option>HHAexchange</option><option>Other</option></select></div>
       <div class="form-group"><label>Contact</label><input type="text" id="edit-contact"></div>
-      <div class="form-group"><label>NPC ID (NatPay)</label><input type="text" id="edit-npc"></div>
+      <div class="form-group"><label>NPC ID</label><input type="text" id="edit-npc"></div>
     </div>
+    <div class="form-group" style="margin-bottom:10px"><label>Notes</label><textarea id="edit-notes" style="min-height:50px"></textarea></div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-primary" onclick="saveEdit()">Save</button>
       <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
@@ -132,25 +135,48 @@ select:focus,input:focus,textarea:focus{outline:2px solid #2E5FA3;border-color:t
   </div>
 </div>
 
+<!-- ADD TEMPLATE MODAL -->
+<div class="modal-bg" id="tpl-modal">
+  <div class="modal">
+    <div class="modal-title" id="tpl-modal-title">Add Email Template</div>
+    <input type="hidden" id="tpl-edit-idx" value="-1">
+    <div class="form-group" style="margin-bottom:8px"><label>Title</label><input type="text" id="tpl-title-input" placeholder="e.g. Holiday Notice"></div>
+    <div class="form-group" style="margin-bottom:8px"><label>Subject</label><input type="text" id="tpl-subject-input" placeholder="Email subject line"></div>
+    <div class="form-group" style="margin-bottom:10px"><label>Body</label><textarea id="tpl-body-input" style="min-height:140px" placeholder="Email body..."></textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="saveTplModal()">Save</button>
+      <button class="btn btn-danger" onclick="closeTplModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- IMAGE LIGHTBOX -->
+<div class="img-modal-bg" id="img-modal" onclick="this.classList.remove('open')">
+  <img id="img-modal-src" src="" alt="screenshot">
+</div>
+
+<!-- CLIENTS PAGE -->
 <div class="page active" id="page-clients">
   <div class="metrics" style="margin-top:12px">
     <div class="metric"><div class="metric-label">Total clients</div><div class="metric-val" id="m-clients">—</div></div>
-    <div class="metric"><div class="metric-label">Total employees</div><div class="metric-val">~7,491</div></div>
     <div class="metric"><div class="metric-label">File deadline</div><div class="metric-val">14:00 EST</div></div>
     <div class="metric"><div class="metric-label">NatPay upload</div><div class="metric-val">14:30 EST</div></div>
+    <div class="metric"><div class="metric-label">NatPay phone</div><div class="metric-val" style="font-size:13px">(813) 222-0333</div></div>
   </div>
   <div class="form-card">
     <div class="form-card-title">+ Add new client</div>
     <div class="form-grid">
-      <div class="form-group"><label>Client name</label><input type="text" id="nc-name" placeholder="Company name"></div>
+      <div class="form-group"><label>Client name</label><input type="text" id="nc-name"></div>
       <div class="form-group"><label>Employees</label><input type="text" id="nc-emp" placeholder="~200"></div>
       <div class="form-group"><label>Payroll day(s)</label><input type="text" id="nc-days" placeholder="Monday, Wednesday"></div>
       <div class="form-group"><label>Pay date</label><input type="text" id="nc-paydate" placeholder="Friday"></div>
       <div class="form-group"><label>Frequency</label><select id="nc-freq"><option>Weekly</option><option>Bi-weekly</option><option>Weekly + Bi-weekly</option><option>Monthly</option></select></div>
       <div class="form-group"><label>System</label><select id="nc-system"><option>UKG</option><option>HHAexchange</option><option>Other</option></select></div>
       <div class="form-group"><label>Contact</label><input type="text" id="nc-contact"></div>
-      <div class="form-group"><label>NPC ID (NatPay)</label><input type="text" id="nc-npc" placeholder="e.g. 14522519"></div>
+      <div class="form-group"><label>NPC ID</label><input type="text" id="nc-npc"></div>
     </div>
+    <div class="form-group" style="margin-top:8px"><label>Notes</label><input type="text" id="nc-notes" placeholder="Optional..."></div>
     <div style="margin-top:9px"><button class="btn btn-primary" onclick="addClient()">Add Client</button></div>
   </div>
   <div class="toolbar">
@@ -160,162 +186,86 @@ select:focus,input:focus,textarea:focus{outline:2px solid #2E5FA3;border-color:t
     <button class="filter-btn" onclick="filterClients('Tuesday',this)">Tuesday</button>
     <button class="filter-btn" onclick="filterClients('Wednesday',this)">Wednesday</button>
   </div>
-  <table><thead><tr><th>Client</th><th>Employees</th><th>Payroll Day(s)</th><th>Pay Date</th><th>Frequency</th><th>System</th><th>NPC ID</th><th>Contact</th><th></th></tr></thead>
+  <table><thead><tr><th>Client</th><th>Emp</th><th>Payroll Day(s)</th><th>Pay Date</th><th>Freq</th><th>System</th><th>NPC ID</th><th>Contact</th><th>Notes</th><th></th></tr></thead>
   <tbody id="client-tbody"></tbody></table>
 </div>
 
-<div class="page" id="page-daily">
-  <div class="form-card" style="margin-top:12px">
-    <div class="form-card-title">Add payroll entry <span class="today-badge" id="daily-date-badge"></span></div>
-    <div class="form-grid">
-      <div class="form-group"><label>Client</label><select id="f-client"><option value="">Select...</option></select></div>
-      <div class="form-group"><label>Date</label><input type="date" id="f-date"></div>
-      <div class="form-group"><label>File received?</label><select id="f-received"><option>Pending</option><option>Yes</option><option>No</option></select></div>
-      <div class="form-group"><label>Received time</label><input type="time" id="f-recv-time"></div>
-      <div class="form-group"><label>Uploaded to NatPay?</label><select id="f-uploaded"><option>Pending</option><option>Yes</option><option>No</option></select></div>
-      <div class="form-group"><label>Upload time</label><input type="time" id="f-upload-time"></div>
-      <div class="form-group"><label>Notif 1 (file uploaded)</label><select id="f-n1"><option>Pending</option><option>Received</option></select></div>
-      <div class="form-group"><label>Notif 2 (bank request)</label><select id="f-n2"><option>Pending</option><option>Received</option></select></div>
-      <div class="form-group"><label>Notif 3 (funds received)</label><select id="f-n3"><option>Pending</option><option>Received</option></select></div>
-      <div class="form-group"><label>Wire / ACH</label><select id="f-wire"><option>ACH</option><option>Wire</option><option>Sameday Wire</option></select></div>
-      <div class="form-group"><label>Status</label><select id="f-status"><option>Pending</option><option>In Progress</option><option>Done</option><option>Late</option><option>Escalated</option></select></div>
-      <div class="form-group"><label>Notes</label><input type="text" id="f-notes" placeholder="Optional..."></div>
-    </div>
-    <div style="margin-top:9px"><button class="btn btn-primary" onclick="addDailyRow()">Add Entry</button></div>
-  </div>
-  <table><thead><tr><th>Date</th><th>Client</th><th>File</th><th>Time</th><th>Uploaded</th><th>Time</th><th>N1</th><th>N2</th><th>N3</th><th>Type</th><th>Status</th><th>Notes</th><th></th></tr></thead>
-  <tbody id="daily-tbody"></tbody></table>
-</div>
-
-<div class="page" id="page-wire">
-  <div class="form-card" style="margin-top:12px">
-    <div class="form-card-title">Add wire confirmation</div>
-    <div class="form-grid">
-      <div class="form-group"><label>Date</label><input type="date" id="w-date"></div>
-      <div class="form-group"><label>Client</label><select id="w-client"><option value="">Select...</option></select></div>
-      <div class="form-group"><label>Pay Period</label><input type="text" id="w-period" placeholder="Apr 1–5"></div>
-      <div class="form-group"><label>Expected ($)</label><input type="number" id="w-expected" step="0.01" placeholder="0.00"></div>
-      <div class="form-group"><label>Received ($)</label><input type="number" id="w-received" step="0.01" placeholder="0.00"></div>
-      <div class="form-group"><label>Conf. ID</label><input type="text" id="w-conf" placeholder="Wire/ACH ref"></div>
-      <div class="form-group"><label>Type</label><select id="w-type"><option>ACH</option><option>Wire</option><option>Sameday Wire (+$150)</option></select></div>
-    </div>
-    <div style="margin-top:9px"><button class="btn btn-primary" onclick="addWireRow()">Add</button></div>
-  </div>
-  <table><thead><tr><th>Date</th><th>Client</th><th>Period</th><th>Expected</th><th>Received</th><th>Discrepancy</th><th>Type</th><th>Conf. ID</th><th>Status</th><th></th></tr></thead>
-  <tbody id="wire-tbody"></tbody></table>
-</div>
-
-<div class="page" id="page-returned">
-  <div class="form-card" style="margin-top:12px">
-    <div class="form-card-title">Log returned deposit notice</div>
-    <div class="form-grid">
-      <div class="form-group"><label>Notice date</label><input type="date" id="rd-date"></div>
-      <div class="form-group"><label>Client</label><select id="rd-client"><option value="">Select...</option></select></div>
-      <div class="form-group"><label>Employee / Vendor</label><input type="text" id="rd-employee" placeholder="Full name"></div>
-      <div class="form-group"><label>Type</label><select id="rd-type"><option>Employee</option><option>Vendor (ACH/Wire)</option><option>Vendor (Live Check — Hana)</option></select></div>
-      <div class="form-group"><label>Form sent?</label><select id="rd-formsent"><option>Pending</option><option>Yes</option><option>No</option></select></div>
-      <div class="form-group"><label>Form received back?</label><select id="rd-formback"><option>Pending</option><option>Yes</option><option>No — funds returned</option></select></div>
-      <div class="form-group"><label>Submitted to NatPay?</label><select id="rd-submitted"><option>Pending</option><option>Yes</option><option>No</option></select></div>
-      <div class="form-group"><label>NatPay confirmed?</label><select id="rd-confirmed"><option>Pending</option><option>Yes</option><option>No</option></select></div>
-      <div class="form-group"><label>$30 added to invoice?</label><select id="rd-fee"><option>No</option><option>Yes</option></select></div>
-      <div class="form-group"><label>Status</label><select id="rd-status"><option>Open</option><option>In Progress</option><option>Resolved</option><option>Funds Returned</option></select></div>
-      <div class="form-group"><label>Notes</label><input type="text" id="rd-notes" placeholder="Optional..."></div>
-    </div>
-    <div style="margin-top:9px"><button class="btn btn-primary" onclick="addReturnedRow()">Log Notice</button></div>
-  </div>
-  <div style="background:#fef3c7;border-radius:7px;padding:9px 13px;font-size:12px;color:#92400e;margin-bottom:12px;">
-    <strong>Deadline:</strong> 14:00 EST same day. Always add <strong>$30</strong> to client invoice.
-  </div>
-  <table><thead><tr><th>Date</th><th>Client</th><th>Employee/Vendor</th><th>Type</th><th>Form Sent</th><th>Form Back</th><th>To NatPay</th><th>Confirmed</th><th>$30</th><th>Status</th><th>Notes</th><th></th></tr></thead>
-  <tbody id="returned-tbody"></tbody></table>
-</div>
-
-<div class="page" id="page-support">
-  <div class="form-card" style="margin-top:12px">
-    <div class="form-card-title">Log IT support task</div>
-    <div class="form-grid">
-      <div class="form-group"><label>Date</label><input type="date" id="it-date"></div>
-      <div class="form-group"><label>Assigned to</label><select id="it-person"><option value="">Select...</option></select></div>
-      <div class="form-group"><label>Client</label><select id="it-client"><option value="">Select...</option></select></div>
-      <div class="form-group"><label>Module</label><select id="it-module"><option>Payroll Processing</option><option>NatPay / Wire</option><option>Direct Deposit</option><option>Reporting</option><option>Employee Import</option><option>Admin Access</option><option>UKG Setup</option><option>HHAexchange</option><option>Wage Parity</option><option>Returned Deposit</option><option>Other</option></select></div>
-      <div class="form-group"><label>Issue</label><input type="text" id="it-issue" placeholder="Brief description..."></div>
-      <div class="form-group"><label>Status</label><select id="it-status"><option>Open</option><option>In Progress</option><option>Resolved</option><option>Escalated</option></select></div>
-      <div class="form-group"><label>Resolved by</label><select id="it-resolvedby"><option value="">—</option></select></div>
-      <div class="form-group"><label>Resolution</label><input type="text" id="it-resolution" placeholder="How was it fixed?"></div>
-    </div>
-    <div style="margin-top:9px"><button class="btn btn-primary" onclick="addSupportRow()">Log Task</button></div>
-  </div>
-  <div class="toolbar">
-    <span style="font-size:12px;color:#888">Filter:</span>
-    <button class="filter-btn active" onclick="filterSupport('all',this)">All</button>
-    <div id="support-person-filters" style="display:contents"></div>
-  </div>
-  <table><thead><tr><th>Date</th><th>Assigned to</th><th>Client</th><th>Module</th><th>Issue</th><th>Status</th><th>Resolved by</th><th>Resolution</th><th></th></tr></thead>
-  <tbody id="support-tbody"></tbody></table>
-</div>
-
-<div class="page" id="page-map">
-  <div style="margin-top:12px;margin-bottom:13px;display:flex;justify-content:space-between;align-items:center">
-    <div><div style="font-size:15px;font-weight:700;color:#1F3864">Team Assignment Map</div>
-    <div style="font-size:12px;color:#888;margin-top:2px">Changes saved to shared database automatically.</div></div>
-    <button class="btn btn-green" onclick="addNewMember()">+ Add member</button>
-  </div>
-  <div class="map-grid" id="map-grid"></div>
-</div>
-
+<!-- HOLIDAY CALENDAR -->
 <div class="page" id="page-holidays">
   <div style="margin-top:12px;margin-bottom:13px">
     <div style="font-size:15px;font-weight:700;color:#1F3864">2026 Federal Holiday Calendar</div>
     <div style="font-size:12px;color:#888;margin-top:2px">NatPay is closed on these days. Notify clients at least 5 business days in advance.</div>
   </div>
   <div style="background:#fef3c7;border-radius:7px;padding:9px 13px;font-size:12px;color:#92400e;margin-bottom:14px;">
-    <strong>Rule:</strong> Send notice at least <strong>5 business days</strong> before. No response in 48h → follow up. 72h → escalate to CEO.
+    <strong>Rule:</strong> Notify 5+ business days before. No response in 48h → follow up. 72h → escalate to Emina.
   </div>
   <div id="holiday-list"></div>
 </div>
 
+<!-- EMAIL TEMPLATES -->
 <div class="page" id="page-templates">
-  <div style="margin-top:12px;margin-bottom:13px">
-    <div style="font-size:15px;font-weight:700;color:#1F3864">Email Templates</div>
-    <div style="font-size:12px;color:#888;margin-top:2px">Copy and paste. Fill in the [bracketed] fields before sending.</div>
+  <div style="margin-top:12px;margin-bottom:13px;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#1F3864">Email Templates</div>
+      <div style="font-size:12px;color:#888;margin-top:2px">Fill in [bracketed] fields before sending.</div>
+    </div>
+    <button class="btn btn-green" onclick="openTplModal(-1)">+ Add Template</button>
   </div>
   <div id="templates-container"></div>
 </div>
 
+<!-- CHECKLIST -->
 <div class="page" id="page-checklist">
   <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
-    <div style="font-size:14px;font-weight:700;color:#1F3864">Daily Checklist <span class="today-badge" id="checklist-date"></span></div>
+    <div style="font-size:14px;font-weight:700;color:#1F3864">Daily Checklist <span id="checklist-date" style="background:#2E5FA3;color:white;border-radius:4px;padding:2px 6px;font-size:11px;margin-left:5px"></span></div>
     <button class="btn btn-danger btn-sm" onclick="resetChecklist()">Reset for today</button>
   </div>
   <div id="checklist-container"></div>
 </div>
 
-<script>
-const SUPABASE_URL = 'https://zzgsmodhnkhanhziybrx.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6Z3Ntb2RobmtoYW5oeml5YnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NzAyMTMsImV4cCI6MjA5MTA0NjIxM30.ZMRG6zcwmReyNesRyGZhYptOlodPj4yyZyhtoSjv1vs';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<!-- FAQ -->
+<div class="page" id="page-faq">
+  <div style="margin-top:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#1F3864">Internal FAQ — Quick Reference</div>
+      <div style="font-size:12px;color:#888;margin-top:2px">Internal use only. When unsure, always ask Emina first.</div>
+    </div>
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-danger btn-sm" onclick="resetFaq()">Reset to default</button>
+      <button class="btn btn-green btn-sm" onclick="addFaqSection()">+ Add Section</button>
+    </div>
+  </div>
+  <div class="faq-search"><input type="text" id="faq-search-input" placeholder="🔍  Search FAQ..." oninput="renderFaq(this.value)"></div>
+  <div id="faq-container"></div>
+</div>
 
+<script>
+const SUPABASE_URL='https://zzgsmodhnkhanhziybrx.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6Z3Ntb2RobmtoYW5oeml5YnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NzAyMTMsImV4cCI6MjA5MTA0NjIxM30.ZMRG6zcwmReyNesRyGZhYptOlodPj4yyZyhtoSjv1vs';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// ── DATA ──────────────────────────────────────────────────────────────────
 const DEFAULT_CLIENTS=[
-  {name:"Mrs. G's Group (Principle, Mrs. G's, ABS)",emp:"~826",days:["Monday"],payDate:"Tuesday",freq:"Weekly",system:"UKG",contact:"Valentina Pineda, Stefanny Tabares",npc:"13674356 / 13685475"},
-  {name:"Bhrags HomeCare",emp:"~2,229",days:["Monday","Wednesday"],payDate:"Wed / Friday",freq:"Weekly + Bi-weekly",system:"UKG",contact:"Eilleen, Tito, Albert",npc:"14014894"},
-  {name:"1st Class Home Care",emp:"~996",days:["Wednesday"],payDate:"Friday",freq:"Weekly",system:"HHAexchange",contact:"Jane Chen",npc:"13448430 / 14550439"},
-  {name:"Red Sun Home Care",emp:"~1,682",days:["Wednesday"],payDate:"Friday",freq:"Weekly",system:"HHAexchange",contact:"Joanna Weng, Amy Low",npc:"13447055"},
-  {name:"Tompkins County Public Library",emp:"~38",days:["Tuesday"],payDate:"Thursday",freq:"Bi-weekly",system:"UKG",contact:"Emerson, Connie",npc:"14245842"},
-  {name:"Bloomingdale School of Music",emp:"~71",days:["Tuesday","Wednesday"],payDate:"Friday",freq:"Bi-weekly",system:"UKG",contact:"Magdalena Garandza, Kayla Jackmon",npc:"13886678"},
-  {name:"Serenity Care",emp:"~85",days:["Tuesday","Wednesday"],payDate:"Friday",freq:"Bi-weekly",system:"UKG",contact:"Sonny, Lynn",npc:"14416372"},
-  {name:"Sunshine Homecare Services",emp:"~469",days:["Monday","Tuesday","Wednesday"],payDate:"Friday",freq:"Weekly + Bi-weekly",system:"UKG",contact:"Karen, Joanne",npc:"14419295 / 14418194"},
-  {name:"Independence Care",emp:"~1,079",days:["Tuesday"],payDate:"Friday",freq:"Weekly",system:"HHAexchange",contact:"Dom Troiano, Rosella Gervasi, Neil Callari",npc:"14522519"},
-  {name:"Tongchun Japanese Cuisine",emp:"~16",days:["Tuesday"],payDate:"Friday",freq:"Weekly",system:"UKG",contact:"Amanda",npc:"14414505"},
+  {name:"Mrs. G's Group (Principle Home Care, Mrs. G's Home Care, ABS)",emp:"~826",days:["Monday"],payDate:"Tuesday",freq:"Weekly",system:"UKG",contact:"Valentina Pineda, Stefanny Tabares",npc:"13674356 / 13685475",notes:"Admin payrolls for Mrs. G's, Principle, ABS. Field staff payroll for Mrs. G's and Principle."},
+  {name:"Bhrags HomeCare",emp:"~2,229",days:["Monday","Wednesday"],payDate:"Wed / Friday",freq:"Weekly + Bi-weekly",system:"UKG",contact:"Eilleen, Tito, Albert",npc:"14014894",notes:"Mon: Admin payroll (bi-weekly). Wed: Shelter Staff and Home Health Aids (alternating bi-weekly)."},
+  {name:"1st Class Home Care",emp:"~996",days:["Wednesday"],payDate:"Friday",freq:"Weekly",system:"HHAexchange",contact:"Jane Chen",npc:"13448430 / 14550439",notes:"Uses HHAexchange. Live checks must be printed and mailed with direct deposit stubs."},
+  {name:"Red Sun Home Care",emp:"~1,682",days:["Wednesday"],payDate:"Friday",freq:"Weekly",system:"HHAexchange",contact:"Joanna Weng, Amy Low",npc:"13447055",notes:"Identical to 1st Class. Frequently misses ACH deadline — monitor Tuesdays by 5 PM."},
+  {name:"Tompkins County Public Library (TCPL)",emp:"~38",days:["Tuesday"],payDate:"Thursday",freq:"Bi-weekly",system:"UKG",contact:"Emerson, Connie",npc:"14245842",notes:"Bi-weekly payroll."},
+  {name:"Bloomingdale School of Music",emp:"~71",days:["Tuesday","Wednesday"],payDate:"Friday",freq:"Bi-weekly",system:"UKG",contact:"Magdalena Garandza, Kayla Jackmon",npc:"13886678",notes:"Bi-weekly payroll."},
+  {name:"Serenity Care",emp:"~85",days:["Tuesday","Wednesday"],payDate:"Friday",freq:"Bi-weekly",system:"UKG",contact:"Sonny, Lynn",npc:"14416372",notes:"Bi-weekly payroll."},
+  {name:"Sunshine Homecare Services",emp:"~469",days:["Monday","Tuesday","Wednesday"],payDate:"Friday",freq:"Weekly + Bi-weekly",system:"UKG",contact:"Karen, Joanne",npc:"14419295 / 14418194",notes:"3 entities. Weekly and bi-weekly payrolls."},
+  {name:"Independence Care",emp:"~1,079",days:["Tuesday"],payDate:"Friday",freq:"Weekly",system:"HHAexchange",contact:"Dom Troiano, Rosella Gervasi, Neil Callari",npc:"14522519",notes:"Uses HHAexchange. Weekly payroll."},
+  {name:"Tongchun Japanese Cuisine",emp:"~16",days:["Tuesday"],payDate:"Friday",freq:"Weekly",system:"UKG",contact:"Amanda",npc:"14414505",notes:"Weekly payroll."},
 ];
-const DEFAULT_TEAM=[
-  {id:"nina",name:"Nina",role:"Head of Operations",color:"nina",clients:[],modules:[]},
-  {id:"luka",name:"Luka",role:"Account Manager",color:"luka",clients:[],modules:[]},
-  {id:"nedim",name:"Nedim",role:"IT Support",color:"nedim",clients:[],modules:[]},
-  {id:"sinisa",name:"Siniša",role:"IT Support",color:"sinisa",clients:[],modules:[]},
-  {id:"new1",name:"New Member 1",role:"TBD",color:"new",clients:[],modules:[]},
-  {id:"new2",name:"New Member 2",role:"TBD",color:"new",clients:[],modules:[]},
+
+const DEFAULT_TEMPLATES=[
+  {title:"Holiday Payroll Notice",subject:"Important: Payroll Processing Reminder – [Holiday Name]",body:"Good afternoon,\n\nIn preparation for the upcoming [Holiday Name] holiday, we would like to share an important payroll processing reminder.\n\nPlease note that [Date] is [Holiday Name], a Federal Banking Holiday. Both the Federal Reserve and NatPay will be closed on this day.\n\nIf you have a payroll scheduled around this date, it may need to be submitted one business day earlier.\n\nOptions:\n1. Standard ACH — Submit one business day earlier (most cost-effective).\n2. Wire Transfer — If more time is needed. Additional fees may apply.\n\nPlease confirm your preference as soon as possible.\n\nBest regards,\n[Your Name]\nForework Support"},
+  {title:"Returned Deposit — Initial Email",subject:"Action Required: Returned Deposit – Corrected Bank Information Needed",body:"Dear [Client Name],\n\nWe received notice from NatPay that a recent deposit for [Employee/Vendor Name] was returned due to incorrect account information.\n\nAttached is the NatPay correction form. Please complete and return it by 2:00 PM EST today.\n\nIf not received by 2:00 PM EST, funds will be returned to your company.\n\nA $30 correction fee will be added to your next invoice.\n\nThank you,\n[Your Name]\nForework Support"},
+  {title:"Returned Deposit — Confirmation",subject:"Confirmation: Deposit Reprocessing Completed",body:"Dear [Client Name],\n\nNatPay has confirmed the corrected bank information for [Employee/Vendor Name] and the payment has been reprocessed. Funds should post on the next business day.\n\nNo further action needed.\n\nThank you,\n[Your Name]\nForework Support"},
+  {title:"Sameday Wire Notice",subject:"Action Required: Sameday Wire Needed for [Client Name] Payroll",body:"Dear [Client Name],\n\nYour payroll submission has been received after the standard ACH deadline. To ensure employees are paid today, a sameday wire is required.\n\nPlease initiate a wire transfer to NatPay by 12:00 PM EST today.\n\nA $150 sameday wire fee will be added to your invoice.\n\nBest regards,\n[Your Name]\nForework Support"},
+  {title:"Holiday Follow-up (48h no response)",subject:"Follow-up: Payroll Holiday Schedule Confirmation Needed",body:"Dear [Client Name],\n\nThis is a follow-up regarding the upcoming [Holiday Name] on [Date]. We have not yet received your confirmation.\n\nPlease respond as soon as possible so we can ensure your employees are paid on time.\n\nBest regards,\n[Your Name]\nForework Support"},
 ];
-const MODULES=["Payroll Processing","NatPay / Wire","Direct Deposit","Reporting","Employee Import","Admin Access","UKG Setup","HHAexchange","Wage Parity","Returned Deposit","Other"];
+
 const HOLIDAYS_2026=[
   {date:"2026-01-01",name:"New Year's Day",reminder:"2025-12-25"},
   {date:"2026-01-19",name:"Martin Luther King Jr. Day",reminder:"2026-01-12"},
@@ -329,42 +279,77 @@ const HOLIDAYS_2026=[
   {date:"2026-11-26",name:"Thanksgiving Day",reminder:"2026-11-17"},
   {date:"2026-12-25",name:"Christmas Day",reminder:"2026-12-16"},
 ];
-const TEMPLATES=[
-  {title:"Holiday Payroll Notice",subject:"Important: Payroll Processing Reminder – [Holiday Name]",body:`Good afternoon,\n\nIn preparation for the upcoming [Holiday Name] holiday, we would like to share an important payroll processing reminder.\n\nPlease note that [Date] is [Holiday Name], a Federal Banking Holiday. Both the Federal Reserve and NatPay will be closed on this day.\n\nIf you have a payroll scheduled around this date, it may need to be submitted one business day earlier.\n\nOptions:\n1. Standard ACH — Submit one business day earlier (most cost-effective).\n2. Wire Transfer — If more time is needed. Additional fees may apply.\n\nPlease confirm your preference as soon as possible.\n\nBest regards,\n[Your Name]\nForework Support`},
-  {title:"Returned Deposit — Initial Email",subject:"Action Required: Returned Deposit – Corrected Bank Information Needed",body:`Dear [Client Name],\n\nWe received notice from NatPay that a recent deposit for [Employee/Vendor Name] was returned due to incorrect account information.\n\nAttached is the NatPay correction form. Please complete and return it by 2:00 PM EST today. We will forward it to NatPay for reprocessing.\n\nIf not received by 2:00 PM EST, funds will be returned to your company and you will need to re-issue payment directly.\n\nA $30 correction fee will be added to your next invoice.\n\nThank you,\n[Your Name]\nForework Support`},
-  {title:"Returned Deposit — Confirmation",subject:"Confirmation: Deposit Reprocessing Completed",body:`Dear [Client Name],\n\nNatPay has confirmed the corrected bank information for [Employee/Vendor Name] and the payment has been reprocessed. Funds should post on the next business day.\n\nNo further action needed.\n\nThank you,\n[Your Name]\nForework Support`},
-  {title:"Sameday Wire Notice",subject:"Action Required: Sameday Wire Needed for [Client Name] Payroll",body:`Dear [Client Name],\n\nYour payroll submission has been received after the standard ACH deadline. To ensure employees are paid today, a sameday wire is required.\n\nPlease initiate a wire transfer to NatPay by 12:00 PM EST today.\n\nA $150 sameday wire fee will be added to your invoice.\n\nBest regards,\n[Your Name]\nForework Support`},
-  {title:"Holiday Follow-up (48h no response)",subject:"Follow-up: Payroll Holiday Schedule Confirmation Needed",body:`Dear [Client Name],\n\nThis is a follow-up regarding the upcoming [Holiday Name] on [Date]. We have not yet received your confirmation.\n\nPlease respond as soon as possible so we can ensure your employees are paid on time.\n\nBest regards,\n[Your Name]\nForework Support`},
-];
+
 const CHECKLIST_STEPS=[
-  {time:"09:00",warn:false,title:"Morning review",detail:"Check Daily Tracker: which clients have payroll today? Any returned deposit notices?"},
-  {time:"Day –1",warn:false,title:"24h reminder",detail:"Send reminder to clients with payroll due tomorrow."},
-  {time:"11:00",warn:false,title:"3h follow-up",detail:"Follow up with clients who haven't submitted yet."},
-  {time:"13:00",warn:true,title:"1h escalation",detail:"Still no submission? Call designated contact, alert internal team."},
-  {time:"14:00",warn:true,title:"DEADLINE — File & Returned Deposit",detail:"Payroll file must be at NatPay. Returned deposit forms also due now."},
-  {time:"14:30",warn:true,title:"NatPay upload deadline",detail:"Upload complete? If late, start sameday wire (+$150 fee to client)."},
-  {time:"Day",warn:false,title:"NatPay 3 notifications",detail:"Track: (1) File uploaded ✓ (2) Bank request ✓ (3) Funds received ✓. If #3 missing, escalate."},
-  {time:"End of day",warn:false,title:"Wire + fee check",detail:"Wire confirmed? $30 or $150 fees added to invoice?"},
-  {time:"Daily AM",warn:false,title:"Open payroll check",detail:"Any payrolls left open? Follow up immediately."},
+  {time:"09:00",warn:false,title:"Morning review",detail:"Check which clients have payroll today. Any returned deposit notices?"},
+  {time:"Day-1",warn:false,title:"24h reminder",detail:"Send reminder to clients with payroll due tomorrow."},
+  {time:"11:00",warn:false,title:"3h follow-up",detail:"Follow up with clients who have not submitted yet."},
+  {time:"13:00",warn:true,title:"1h escalation",detail:"Still no submission? Call designated contact, alert Emina."},
+  {time:"14:00",warn:true,title:"DEADLINE — File",detail:"Payroll file must be at NatPay by now."},
+  {time:"14:30",warn:true,title:"DEADLINE — NatPay upload",detail:"Upload complete? If late, start sameday wire (+$150 fee to client)."},
+  {time:"Day",warn:false,title:"NatPay 3 notifications",detail:"Track: (1) File uploaded (2) Bank request sent (3) Funds received. If #3 missing, escalate immediately."},
+  {time:"EOD",warn:false,title:"Open payroll check",detail:"Any payrolls left open? Follow up immediately."},
   {time:"1st Mon",warn:false,title:"Monthly audit",detail:"Review late submissions. Report to Emina."},
 ];
 
-// STATE
-let clients=[], team=[], daily=[], wire=[], returned=[], support=[], holidays={};
-let spFilter='all';
+const DEFAULT_FAQ=[
+  {section:"1. NatPay & Payroll Processing",items:[
+    {q:"What is NatPay and what is our role?",a:"NatPay (my.directdeposit.com) processes direct deposit for all Forework clients. When a client finalizes payroll, the support team downloads the payroll file and uploads it to NatPay.\n\nYou will receive 3 email notifications per payroll:\n1. File uploaded successfully to NatPay\n2. Bank request sent to client's bank\n3. Funds received from client's bank\n\nIf notification #3 does not arrive, contact NatPay immediately — the client's bank may not have released the funds.\nNatPay phone: (813) 222-0333 | Email: csr@natpay.com",warn:false},
+    {q:"What is the difference between ACH, Reverse Wire, Wire, and Sameday Wire?",a:"ACH (standard): 1–2 business days. Most common, no extra fee. Default for most clients.\n\nReverse Wire: NatPay pulls money from the client's bank automatically. Default for some clients like Mrs. G's.\n\nWire: Client goes to their bank and manually sends money to NatPay. Faster than ACH. Used when client misses the ACH window.\n\nSameday Wire: Client initiates a manual wire by 12:00 PM EST → employees receive funds by 5:00 PM same day. Costs client an extra $150.\n\nWhen a client misses the deadline: check if reverse wire is still possible. If not, ask Emina whether to offer sameday wire.",warn:false},
+    {q:"What are the daily deadlines?",a:"09:00 AM — Check which clients have payroll today\n11:00 AM — Follow up with clients who have not submitted\n01:00 PM — Escalate if still no submission — contact Emina\n02:00 PM — DEADLINE: Payroll file must be received\n02:30 PM — DEADLINE: Upload to NatPay\nAfter 02:30 PM — If late, sameday wire process starts (+$150 fee to client)",warn:false},
+    {q:"A client missed the payroll deadline. What do I do?",a:"1. Check if ACH or reverse wire is still possible — call NatPay: (813) 222-0333 or csr@natpay.com\n2. If too late, ask Emina whether to offer Sameday Wire (+$150 fee)\n3. Client must initiate wire from their bank by 12:00 PM EST\n4. Upload file to NatPay and confirm receipt\n\nAlways add $150 to the client's invoice when sameday wire is used.",warn:false},
+    {q:"A client's bank is not releasing funds on time. What do I do?",a:"1. Monitor the 3rd NatPay notification (funds received). If it does not arrive by end of day, act immediately\n2. Contact the client and inform them their bank has not released funds\n3. Ask the client to call their bank directly and request a manual wire transfer to NatPay\n4. Contact Emina to inform her of the situation\n\nNote: Red Sun Home Care frequently misses the ACH deadline — monitor their submissions every Tuesday by 5:00 PM and be ready for a wire.",warn:false},
+  ]},
+  {section:"2. Downloading & Uploading Payroll Files",items:[
+    {q:"How do I download payroll files from the Forework system?",a:"Go to: Maintenance → Administration → Payment Warehouse (ACH)\n\nEach payroll has 3 files:\n- PAYROLL (the payroll file)\n- Tax (tax file)\n- FWBilling (Forework invoice)\n\nSteps:\n1. Tick the checkbox next to all 3 files (or tick 'Page' to select all)\n2. Click 'CREATE EXPORT FILE' button at the top\n3. First popup appears — click OK\n4. Second popup appears — click Download (NOT OK)\n5. Click OK to complete\n\nIMPORTANT: In the second popup you must click Download, not OK. If you click OK without downloading, use View Export History to recover the file.",warn:false},
+    {q:"I clicked OK without downloading. How do I find the file?",a:"Go back to: Maintenance → Administration → Payment Warehouse (ACH)\n1. Click 'VIEW EXPORT HISTORY' at the top right\n2. Find your file by date or payroll name\n3. Download the file from there",warn:false},
+    {q:"How do I upload payroll files to NatPay?",a:"Go to my.directdeposit.com and sign in with your Forework credentials.\n\n1. Click 'Dosya Seç' (Choose File) next to Forework, LLC\n2. Select the payroll file you downloaded from Payment Warehouse\n3. Click Upload\n4. Make sure the method is correct (ACH / Wire / Reverse Wire)\n5. If a notification appears, click Accept\n\nAfter uploading, monitor 3 NatPay email notifications:\n(1) File uploaded\n(2) Bank request sent\n(3) Funds received",warn:false},
+  ]},
+  {section:"3. Returned Deposits",items:[
+    {q:"I received a returned deposit notice from NatPay. What do I do?",a:"DEADLINE: 2:00 PM EST same day. Always add $30 to client invoice.\n\n1. Open the notice immediately — identify if it is an employee or vendor account\n2. Email the client using the Returned Deposit template (see Email Templates tab)\n3. Attach the NatPay correction form — client must return it by 2:00 PM EST same day\n4. Once received, forward the completed form to csr@natpay.com\n5. Save a copy in the client folder\n6. When NatPay confirms reprocessing, send confirmation email to client\n\nIf client does not respond by 2:00 PM EST, funds are returned to the employer.",warn:false},
+    {q:"What if it is a vendor account, not an employee?",a:"Vendor (ACH/Wire): Same process as employee — NatPay correction form, 2:00 PM deadline, $30 fee.\n\nVendor (Live Check): Forward the notice to Hana — she prints and mails the check. No further action needed from support.",warn:false},
+  ]},
+  {section:"4. Potential Fraud Alerts",items:[
+    {q:"NatPay sent a Potential Fraud Detection notice. What do I do?",a:"STOP. Do not approve or release the flagged deposit yourself.\n\n1. Forward the NatPay fraud notice to Emina IMMEDIATELY\n   Subject line: URGENT: NatPay Fraud Alert\n2. Wait for Emina to verify with the client whether the bank account change was legitimate\n3. Emina will reply directly to NatPay to approve or reject\n4. Do not respond to NatPay until Emina has confirmed\n\nReal example: Bhrags Home Care Corp, April 7 2026 — two deposits flagged ($1,362 and $1,222 to Sutton Bank pay cards).",warn:true},
+    {q:"How do I recognize a fraud alert email from NatPay?",a:"Subject line contains: 'Potential Fraud Report' or 'Potential Fraud Detection'\n\nThe email includes:\n- NPC Account number\n- Client company name\n- Employee name\n- Deposit amount\n- Pay card company name (e.g. Sutton Bank)",warn:false},
+  ]},
+  {section:"5. Client System Issues",items:[
+    {q:"A client says an employee cannot log in or see the admin panel.",a:"1. Log in to UKG as a Forework admin\n2. Find the user and update their role to admin\n3. Log in as the user to verify all menus and staff are visible\n4. Ask the client to confirm on their end",warn:false},
+    {q:"A client wants to change a finalized payroll. Is that possible?",a:"No. Once a payroll is finalized it is locked — no date or content changes are possible.\n\nTell the client: 'There is no way to apply new dates to an already finalized payroll. A new supplemental payroll must be created.'\n\nQUARTER-END WARNING: Open payrolls during quarter-end block quarterly tax filings. Always treat as HIGH PRIORITY.",warn:true},
+    {q:"Employee list shows 0 employees or $0 salaries. What do I do?",a:"This usually happens after a data migration (e.g. new EIN). Escalate to Emina — TBD process.",warn:true},
+  ]},
+  {section:"6. Employee Login & App Issues",items:[
+    {q:"An employee says they cannot clock in or see their timesheet in the app.",a:"1. Log in to the system as that employee (without them) to see what they see\n2. If clock-in options are visible — the system is working fine\n3. Ask HR to instruct the employee to: clear app cache, log out and back in, or reinstall the app\n4. If problem persists after cache clear — contact Emina\n\nNote from Emina: 'Usually there is no problem — it is a cache issue or the employee did not click something correctly.'",warn:false},
+    {q:"An employee cannot download or print their pay statement (blank PDF).",a:"This is a known issue with some browsers/devices.\n\nWorkaround for employee:\n1. Try a different browser (Chrome recommended)\n2. Clear browser cache and try again\n3. Try on a desktop instead of mobile\n\nWorkaround via Forework support:\n1. Go to Pay Statements in that payroll\n2. Select the employee's check using the checkbox on the left\n3. Click Utilities (top right) → Deliver Selected Pay Statements\n4. Choose destination: Client Email or employee's email\n5. Uncheck 'Add Non-Negotiable' if sending a live check PDF\n6. Add a comment and click OK — employee receives PDF by email",warn:false},
+    {q:"A client says they cannot reach support by phone.",a:"1. Acknowledge immediately by email\n2. Ask them to send the issue in writing to support@forework.com\n3. Forward to Emina with a summary\n\nNever leave a client without a response — even a brief acknowledgment is enough.",warn:false},
+  ]},
+  {section:"7. Garnishment & Supplemental Payroll",items:[
+    {q:"What is a supplemental payroll?",a:"A supplemental payroll is an additional off-cycle payroll run used to pay employees outside the regular schedule. Typically used for bonuses, corrections, or missed pay.\n\nIf created by mistake and employees have already been paid: the client should DELETE it. If deleted, taxes for that period may need to be corrected.\n\nQUARTER-END: Open supplemental payrolls block tax filings. Always treat as HIGH PRIORITY.",warn:false},
+    {q:"A client says a garnishment was set up with the wrong bank account.",a:"Do NOT try to fix the bank account yourself. Escalate to Emina immediately.\n\nGarnishment errors have caused manual replacement checks in the past.",warn:true},
+  ]},
+  {section:"8. NYS New Hire Reporting",items:[
+    {q:"What is NYS New Hire Reporting and why do we do it?",a:"New York State requires all employers to report newly hired and rehired employees within 20 calendar days of their start date.\n\nEach report includes: employee name, address, SSN, hire date, and employer name, address, and FEIN.\n\nThis is a legal requirement — not optional. Submit twice a month to stay within the 20-day window.",warn:false},
+    {q:"I received a New Hire Report file in the support email. What do I do?",a:"1. You will receive an email with an attachment — save the file\n2. Click the link in the email OR go to: https://www.nynewhire.com/#/login\n3. Sign in with your credentials\n4. Click Browse → select the file\n5. Click Upload\n6. Click OK to confirm\n\nUpload twice a month to stay within the 20-day legal requirement.",warn:false},
+  ]},
+  {section:"9. Tax Refunds",items:[
+    {q:"How do we process a tax refund for a client?",a:"1. Milea receives an email from the ReadyTax team indicating a refund needs to be processed, with the amount and reason\n2. Milea confirms the refund with Emina (Emina is involved in all tax-related communications)\n3. Log into the Forework system:\n   - Homepage: find the company and press the 3rd button from the left (shown with red circle)\n   - Go to the hamburger menu → select Bank Account\n   - Press the pencil icon to view the company's bank info\n4. Go to the Mirror page → navigate to the ACH Warehouse section\n5. Create a new manual ACH entry with:\n   - Company name (client receiving the refund)\n   - Click to flag\n   - Credit amount to refund\n   - Client's bank account info (routing number, account number)\n   - Forework's bank account info for the debit\n   - A comment explaining the reason for the refund\n6. Export the ACH file and upload it to NatPay to process the refund\n7. Follow up with the client to notify them the refund has been processed\n\nNote: You will need Forework's bank account info for the debit entry — ask Emina for access if you do not have it.",warn:false},
+  ]},
+];
 
-// SYNC STATUS
+// ── STATE ─────────────────────────────────────────────────────────────────
+let clients=[], faqData=[], templates=[], clientFilter='all';
+
+// ── SUPABASE HELPERS ──────────────────────────────────────────────────────
 function setSyncStatus(state,msg){
   const el=document.getElementById('sync-status');
-  el.className='';el.classList.add(state==='ok'?'sync-ok':state==='saving'?'sync-saving':'sync-err');
+  el.className='';
+  el.classList.add(state==='ok'?'sync-ok':state==='saving'?'sync-saving':'sync-err');
   el.textContent=msg;
 }
-
-// SUPABASE HELPERS
 async function sbLoad(table){
   const {data,error}=await sb.from(table).select('*').order('created_at',{ascending:true});
   if(error){setSyncStatus('err','DB Error');return [];}
-  return data.map(r=>({...r.data,_id:r.id}));
+  return (data||[]).map(r=>({...r.data,_id:r.id}));
 }
 async function sbInsert(table,data){
   setSyncStatus('saving','Saving...');
@@ -380,250 +365,98 @@ async function sbUpdate(table,id,data){
   setSyncStatus('ok','Saved');
 }
 async function sbDelete(table,id){
-  setSyncStatus('saving','Deleting...');
   const {error}=await sb.from(table).delete().eq('id',id);
   if(error){setSyncStatus('err','Delete failed');return;}
   setSyncStatus('ok','Deleted');
 }
 
-// UTILS
+// ── UTILS ─────────────────────────────────────────────────────────────────
 const today=()=>new Date().toISOString().split('T')[0];
 const todayLabel=()=>new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-const fmt$=n=>'$'+parseFloat(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-const dayBadge=d=>({Monday:'badge-mon',Tuesday:'badge-tue',Wednesday:'badge-wed'}[d]||'badge-mon');
-const initials=n=>n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
 const fmtDate=d=>d?new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+const dayBadge=d=>({Monday:'badge-mon',Tuesday:'badge-tue',Wednesday:'badge-wed'}[d]||'badge-mon');
+const lsave=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const lload=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v!==null?v:d;}catch{return d;}};
 
 function showPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  btn.classList.add('active');
+  if(btn)btn.classList.add('active');
 }
 
-function populateSelects(){
-  ['f-client','w-client','it-client','rd-client'].forEach(id=>{
-    const s=document.getElementById(id);if(!s)return;
-    const v=s.value;s.innerHTML='<option value="">Select...</option>';
-    clients.forEach(c=>{const o=document.createElement('option');o.value=c.name;o.textContent=c.name;s.appendChild(o);});
-    s.value=v;
-  });
-  ['it-person','it-resolvedby'].forEach(id=>{
-    const s=document.getElementById(id);if(!s)return;
-    s.innerHTML=id==='it-resolvedby'?'<option value="">—</option>':'<option value="">Select...</option>';
-    team.forEach(p=>{const o=document.createElement('option');o.value=p.name;o.textContent=p.name;s.appendChild(o);});
-  });
-  ['f-date','w-date','it-date','rd-date'].forEach(id=>{const el=document.getElementById(id);if(el&&!el.value)el.value=today();});
+// ── CLIENTS ───────────────────────────────────────────────────────────────
+function filterClients(day,btn){
+  clientFilter=day;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderClients();
 }
-
-// CLIENTS
+function renderClients(){
+  const list=clientFilter==='all'?clients:clients.filter(c=>c.days&&c.days.includes(clientFilter));
+  document.getElementById('m-clients').textContent=clients.length;
+  document.getElementById('client-tbody').innerHTML=list.map(c=>`
+    <tr>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.emp||'—'}</td>
+      <td>${(c.days||[]).map(d=>`<span class="badge ${dayBadge(d)}">${d}</span>`).join(' ')}</td>
+      <td>${c.payDate||'—'}</td>
+      <td>${c.freq||'—'}</td>
+      <td>${c.system||'—'}</td>
+      <td style="font-size:11px">${c.npc||'—'}</td>
+      <td style="font-size:11px">${c.contact||'—'}</td>
+      <td style="font-size:11px;color:#666">${c.notes||'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm btn-amber" onclick="openEdit('${c._id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteClient('${c._id}')" style="margin-left:4px">✕</button>
+      </td>
+    </tr>`).join('');
+}
 async function addClient(){
-  const name=document.getElementById('nc-name').value.trim();if(!name)return;
-  const c={name,emp:document.getElementById('nc-emp').value,
-    days:document.getElementById('nc-days').value.split(',').map(s=>s.trim()).filter(Boolean),
-    payDate:document.getElementById('nc-paydate').value,freq:document.getElementById('nc-freq').value,
-    system:document.getElementById('nc-system').value,contact:document.getElementById('nc-contact').value,
-    npc:document.getElementById('nc-npc').value};
+  const name=document.getElementById('nc-name').value.trim();
+  if(!name)return alert('Client name required');
+  const days=document.getElementById('nc-days').value.split(',').map(d=>d.trim()).filter(Boolean);
+  const c={name,emp:document.getElementById('nc-emp').value,days,payDate:document.getElementById('nc-paydate').value,
+    freq:document.getElementById('nc-freq').value,system:document.getElementById('nc-system').value,
+    contact:document.getElementById('nc-contact').value,npc:document.getElementById('nc-npc').value,
+    notes:document.getElementById('nc-notes').value};
   const saved=await sbInsert('clients',c);
-  if(saved){clients.push(saved);['nc-name','nc-emp','nc-days','nc-paydate','nc-contact','nc-npc'].forEach(id=>document.getElementById(id).value='');
-  renderClients();populateSelects();renderMap();}
+  if(saved){clients.push(saved);renderClients();
+    ['nc-name','nc-emp','nc-days','nc-paydate','nc-contact','nc-npc','nc-notes'].forEach(id=>document.getElementById(id).value='');}
 }
-function openEdit(idx){
-  const c=clients[idx];
-  document.getElementById('edit-id').value=c._id;
-  document.getElementById('edit-name').value=c.name;
-  document.getElementById('edit-emp').value=c.emp;
+function openEdit(id){
+  const c=clients.find(x=>x._id===id);if(!c)return;
+  document.getElementById('edit-id').value=id;
+  document.getElementById('edit-name').value=c.name||'';
+  document.getElementById('edit-emp').value=c.emp||'';
   document.getElementById('edit-days').value=(c.days||[]).join(', ');
-  document.getElementById('edit-paydate').value=c.payDate;
-  document.getElementById('edit-freq').value=c.freq;
-  document.getElementById('edit-system').value=c.system;
-  document.getElementById('edit-contact').value=c.contact;
+  document.getElementById('edit-paydate').value=c.payDate||'';
+  document.getElementById('edit-freq').value=c.freq||'Weekly';
+  document.getElementById('edit-system').value=c.system||'UKG';
+  document.getElementById('edit-contact').value=c.contact||'';
   document.getElementById('edit-npc').value=c.npc||'';
+  document.getElementById('edit-notes').value=c.notes||'';
   document.getElementById('edit-modal').classList.add('open');
 }
 async function saveEdit(){
   const id=document.getElementById('edit-id').value;
-  const updated={name:document.getElementById('edit-name').value,emp:document.getElementById('edit-emp').value,
-    days:document.getElementById('edit-days').value.split(',').map(s=>s.trim()).filter(Boolean),
-    payDate:document.getElementById('edit-paydate').value,freq:document.getElementById('edit-freq').value,
+  const c=clients.find(x=>x._id===id);if(!c)return;
+  const days=document.getElementById('edit-days').value.split(',').map(d=>d.trim()).filter(Boolean);
+  Object.assign(c,{name:document.getElementById('edit-name').value,emp:document.getElementById('edit-emp').value,
+    days,payDate:document.getElementById('edit-paydate').value,freq:document.getElementById('edit-freq').value,
     system:document.getElementById('edit-system').value,contact:document.getElementById('edit-contact').value,
-    npc:document.getElementById('edit-npc').value};
-  await sbUpdate('clients',id,updated);
-  const idx=clients.findIndex(c=>c._id===id);
-  if(idx!==-1)clients[idx]={...updated,_id:id};
-  closeModal();renderClients();populateSelects();renderMap();
+    npc:document.getElementById('edit-npc').value,notes:document.getElementById('edit-notes').value});
+  await sbUpdate('clients',id,{...c});
+  closeModal();renderClients();
+}
+async function deleteClient(id){
+  if(!confirm('Delete this client?'))return;
+  await sbDelete('clients',id);
+  clients=clients.filter(c=>c._id!==id);renderClients();
 }
 function closeModal(){document.getElementById('edit-modal').classList.remove('open');}
-async function deleteClient(idx){
-  if(!confirm('Delete this client?'))return;
-  await sbDelete('clients',clients[idx]._id);
-  clients.splice(idx,1);renderClients();populateSelects();renderMap();
-}
-function filterClients(day,btn){document.querySelectorAll('#page-clients .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderClients(day);}
-function renderClients(filter='all'){
-  document.getElementById('m-clients').textContent=clients.length;
-  document.getElementById('client-tbody').innerHTML=clients.map((c,i)=>{
-    const show=filter==='all'||(c.days||[]).includes(filter);
-    const badges=(c.days||[]).map(d=>`<span class="badge ${dayBadge(d)}">${d}</span>`).join(' ');
-    return `<tr style="display:${show?'':'none'};background:${i%2===0?'#f8faff':'#fff'}">
-      <td><strong>${c.name}</strong></td><td>${c.emp}</td><td>${badges}</td>
-      <td>${c.payDate}</td><td>${c.freq}</td><td>${c.system}</td>
-      <td style="font-size:11px;color:#555;font-family:monospace">${c.npc||'—'}</td>
-      <td style="font-size:12px;color:#555">${c.contact}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-amber btn-sm" style="margin-right:4px" onclick="openEdit(${i})">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteClient(${i})">✕</button>
-      </td></tr>`;
-  }).join('');
-}
 
-// DAILY
-async function addDailyRow(){
-  const r={date:document.getElementById('f-date').value,client:document.getElementById('f-client').value,
-    received:document.getElementById('f-received').value,recvTime:document.getElementById('f-recv-time').value,
-    uploaded:document.getElementById('f-uploaded').value,uploadTime:document.getElementById('f-upload-time').value,
-    n1:document.getElementById('f-n1').value,n2:document.getElementById('f-n2').value,n3:document.getElementById('f-n3').value,
-    wire:document.getElementById('f-wire').value,status:document.getElementById('f-status').value,
-    notes:document.getElementById('f-notes').value};
-  const saved=await sbInsert('daily',r);
-  if(saved){daily.push(saved);document.getElementById('f-client').value='';document.getElementById('f-notes').value='';renderDaily();}
-}
-async function deleteDailyRow(id){await sbDelete('daily',id);daily=daily.filter(r=>r._id!==id);renderDaily();}
-async function updateDailyStatus(id,val){
-  const r=daily.find(r=>r._id===id);if(!r)return;
-  r.status=val;await sbUpdate('daily',id,{...r});renderDaily();
-}
-function renderDaily(){
-  const tbody=document.getElementById('daily-tbody');
-  if(!daily.length){tbody.innerHTML='<tr><td colspan="13" style="text-align:center;color:#aaa;padding:18px">No entries yet.</td></tr>';return;}
-  const notif=v=>v==='Received'?'<span class="s-resolved">✓</span>':'<span class="s-pending">—</span>';
-  tbody.innerHTML=daily.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`
-    <tr><td>${r.date}</td><td><strong>${r.client}</strong></td><td>${r.received}</td><td>${r.recvTime||'—'}</td>
-    <td>${r.uploaded}</td><td>${r.uploadTime||'—'}</td>
-    <td>${notif(r.n1)}</td><td>${notif(r.n2)}</td><td>${notif(r.n3)}</td><td>${r.wire}</td>
-    <td><select onchange="updateDailyStatus('${r._id}',this.value)" style="width:110px">
-      ${['Pending','In Progress','Done','Late','Escalated'].map(s=>`<option ${s===r.status?'selected':''}>${s}</option>`).join('')}
-    </select></td>
-    <td style="font-size:12px;color:#555">${r.notes||'—'}</td>
-    <td><button class="btn btn-danger btn-sm" onclick="deleteDailyRow('${r._id}')">✕</button></td></tr>`).join('');
-}
-
-// WIRE
-async function addWireRow(){
-  const exp=parseFloat(document.getElementById('w-expected').value)||0;
-  const rec=parseFloat(document.getElementById('w-received').value)||0;
-  const r={date:document.getElementById('w-date').value,client:document.getElementById('w-client').value,
-    period:document.getElementById('w-period').value,expected:exp,received:rec,disc:rec-exp,
-    type:document.getElementById('w-type').value,conf:document.getElementById('w-conf').value};
-  const saved=await sbInsert('wire',r);
-  if(saved){wire.push(saved);['w-expected','w-received','w-conf','w-period'].forEach(id=>document.getElementById(id).value='');renderWire();}
-}
-async function deleteWireRow(id){await sbDelete('wire',id);wire=wire.filter(r=>r._id!==id);renderWire();}
-function renderWire(){
-  const tbody=document.getElementById('wire-tbody');
-  if(!wire.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:#aaa;padding:18px">No wire confirmations yet.</td></tr>';return;}
-  tbody.innerHTML=wire.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>{
-    const disc=parseFloat(r.disc);const ok=Math.abs(disc)<0.01;
-    return `<tr><td>${r.date}</td><td><strong>${r.client}</strong></td><td>${r.period||'—'}</td>
-      <td>${fmt$(r.expected)}</td><td>${fmt$(r.received)}</td>
-      <td class="${ok?'disc-zero':'disc-neg'}">${ok?fmt$(0)+' ✓':fmt$(disc)}</td>
-      <td>${r.type}</td><td style="font-size:11px">${r.conf||'—'}</td>
-      <td>${ok?'<span class="s-resolved">Match</span>':'<span class="s-late">Discrepancy!</span>'}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteWireRow('${r._id}')">✕</button></td></tr>`;
-  }).join('');
-}
-
-// RETURNED
-async function addReturnedRow(){
-  const r={date:document.getElementById('rd-date').value,client:document.getElementById('rd-client').value,
-    employee:document.getElementById('rd-employee').value,type:document.getElementById('rd-type').value,
-    formSent:document.getElementById('rd-formsent').value,formBack:document.getElementById('rd-formback').value,
-    submitted:document.getElementById('rd-submitted').value,confirmed:document.getElementById('rd-confirmed').value,
-    fee:document.getElementById('rd-fee').value,status:document.getElementById('rd-status').value,
-    notes:document.getElementById('rd-notes').value};
-  const saved=await sbInsert('returned',r);
-  if(saved){returned.push(saved);document.getElementById('rd-employee').value='';document.getElementById('rd-notes').value='';renderReturned();}
-}
-async function deleteReturnedRow(id){await sbDelete('returned',id);returned=returned.filter(r=>r._id!==id);renderReturned();}
-async function updateReturnedStatus(id,val){const r=returned.find(r=>r._id===id);if(!r)return;r.status=val;await sbUpdate('returned',id,{...r});renderReturned();}
-function renderReturned(){
-  const tbody=document.getElementById('returned-tbody');
-  if(!returned.length){tbody.innerHTML='<tr><td colspan="12" style="text-align:center;color:#aaa;padding:18px">No returned deposit notices.</td></tr>';return;}
-  const yn=v=>v==='Yes'?'<span class="s-resolved">Yes</span>':v==='No'||v==='No — funds returned'?'<span class="s-late">No</span>':'<span class="s-pending">Pending</span>';
-  const fee=v=>v==='Yes'?'<span class="s-resolved">Yes ✓</span>':'<span class="s-late">NO!</span>';
-  tbody.innerHTML=returned.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`
-    <tr><td>${r.date}</td><td><strong>${r.client}</strong></td><td>${r.employee}</td><td style="font-size:11px">${r.type}</td>
-    <td>${yn(r.formSent)}</td><td>${yn(r.formBack)}</td><td>${yn(r.submitted)}</td><td>${yn(r.confirmed)}</td><td>${fee(r.fee)}</td>
-    <td><select onchange="updateReturnedStatus('${r._id}',this.value)" style="width:115px">
-      ${['Open','In Progress','Resolved','Funds Returned'].map(s=>`<option ${s===r.status?'selected':''}>${s}</option>`).join('')}
-    </select></td>
-    <td style="font-size:11px;color:#555">${r.notes||'—'}</td>
-    <td><button class="btn btn-danger btn-sm" onclick="deleteReturnedRow('${r._id}')">✕</button></td></tr>`).join('');
-}
-
-// SUPPORT
-async function addSupportRow(){
-  const r={date:document.getElementById('it-date').value,person:document.getElementById('it-person').value,
-    client:document.getElementById('it-client').value,module:document.getElementById('it-module').value,
-    issue:document.getElementById('it-issue').value,status:document.getElementById('it-status').value,
-    resolvedBy:document.getElementById('it-resolvedby').value,resolution:document.getElementById('it-resolution').value};
-  const saved=await sbInsert('support',r);
-  if(saved){support.push(saved);['it-issue','it-resolution'].forEach(id=>document.getElementById(id).value='');renderSupport();renderSupportFilters();}
-}
-async function deleteSupportRow(id){await sbDelete('support',id);support=support.filter(r=>r._id!==id);renderSupport();}
-async function updateSupportStatus(id,val){const r=support.find(r=>r._id===id);if(!r)return;r.status=val;await sbUpdate('support',id,{...r});renderSupport();}
-function filterSupport(person,btn){spFilter=person;document.querySelectorAll('#page-support .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSupport();}
-function renderSupportFilters(){
-  const c=document.getElementById('support-person-filters');
-  c.innerHTML=team.map(p=>`<button class="filter-btn ${spFilter===p.name?'active':''}" onclick="filterSupport('${p.name}',this)">${p.name}</button>`).join('');
-}
-function renderSupport(){
-  const filtered=spFilter==='all'?support:support.filter(r=>r.person===spFilter);
-  const tbody=document.getElementById('support-tbody');
-  if(!filtered.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:#aaa;padding:18px">No support tasks yet.</td></tr>';return;}
-  tbody.innerHTML=filtered.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`
-    <tr><td>${r.date}</td><td><strong>${r.person||'—'}</strong></td><td>${r.client||'—'}</td>
-    <td><span class="badge badge-tue" style="white-space:nowrap">${r.module}</span></td><td>${r.issue}</td>
-    <td><select onchange="updateSupportStatus('${r._id}',this.value)" style="width:110px">
-      ${['Open','In Progress','Resolved','Escalated'].map(s=>`<option ${s===r.status?'selected':''}>${s}</option>`).join('')}
-    </select></td>
-    <td>${r.resolvedBy||'—'}</td><td style="font-size:12px;color:#555">${r.resolution||'—'}</td>
-    <td><button class="btn btn-danger btn-sm" onclick="deleteSupportRow('${r._id}')">✕</button></td></tr>`).join('');
-}
-
-// TEAM / MAP
-async function addNewMember(){
-  const name=prompt('New team member name:');if(!name)return;
-  const role=prompt('Role:','IT Support')||'IT Support';
-  const m={id:'m'+Date.now(),name,role,color:'new',clients:[],modules:[]};
-  const saved=await sbInsert('team',m);
-  if(saved){team.push(saved);populateSelects();renderMap();renderSupportFilters();}
-}
-async function toggleAssign(pid,type,value){
-  const p=team.find(t=>t._id===pid);if(!p)return;
-  const arr=p[type],idx=arr.indexOf(value);
-  if(idx===-1)arr.push(value);else arr.splice(idx,1);
-  await sbUpdate('team',p._id,{...p});renderMap();
-}
-function renderMap(){
-  document.getElementById('map-grid').innerHTML=team.map(p=>{
-    const cT=p.clients.map(c=>`<span class="assign-tag">${c} <span class="rm" onclick="toggleAssign('${p._id}','clients','${c.replace(/'/g,"\\'")}')">✕</span></span>`).join('');
-    const mT=p.modules.map(m=>`<span class="assign-tag module">${m} <span class="rm" onclick="toggleAssign('${p._id}','modules','${m}')">✕</span></span>`).join('');
-    const cO=clients.filter(c=>!p.clients.includes(c.name)).map(c=>`<option value="${c.name.replace(/"/g,'&quot;')}">${c.name}</option>`).join('');
-    const mO=MODULES.filter(m=>!p.modules.includes(m)).map(m=>`<option value="${m}">${m}</option>`).join('');
-    return `<div class="person-card"><div class="person-header ph-${p.color}">
-      <div class="avatar av-${p.color}">${initials(p.name)}</div>
-      <div><div class="person-name">${p.name}</div><div class="person-role">${p.role}</div></div></div>
-      <div class="person-body">
-        <div class="assign-label">Clients</div><div>${cT||'<span style="font-size:11px;color:#bbb">None assigned</span>'}</div>
-        ${cO?`<select style="margin-top:5px;font-size:11px" onchange="toggleAssign('${p._id}','clients',this.value);this.value=''"><option value="">+ Add client...</option>${cO}</select>`:''}
-        <div class="assign-label">Modules</div><div>${mT||'<span style="font-size:11px;color:#bbb">None assigned</span>'}</div>
-        ${mO?`<select style="margin-top:5px;font-size:11px" onchange="toggleAssign('${p._id}','modules',this.value);this.value=''"><option value="">+ Add module...</option>${mO}</select>`:''}
-      </div></div>`;
-  }).join('');
-}
-
-// HOLIDAYS
+// ── HOLIDAYS ──────────────────────────────────────────────────────────────
 async function renderHolidays(){
   const {data}=await sb.from('holidays').select('*');
   const hmap={};(data||[]).forEach(r=>{hmap[r.data.date]=r.data.status;});
@@ -631,14 +464,14 @@ async function renderHolidays(){
   document.getElementById('holiday-list').innerHTML=HOLIDAYS_2026.map(h=>{
     const isPast=h.date<todayStr,reminderPast=h.reminder<todayStr;
     const status=hmap[h.date]||'Not sent';
-    const statusOpts=['Not sent','Sent','Confirmed by client','No response — escalated'];
-    return `<div class="hol-card" style="opacity:${isPast?.5:1}">
-      <div style="min-width:10px;width:4px;height:40px;border-radius:2px;background:${isPast?'#d1d5db':reminderPast?'#dc2626':'#2E5FA3'};flex-shrink:0"></div>
+    const opts=['Not sent','Sent','Confirmed by client','No response — escalated'];
+    return `<div class="hol-card" style="opacity:${isPast?0.5:1}">
+      <div style="width:4px;height:40px;border-radius:2px;background:${isPast?'#d1d5db':reminderPast?'#dc2626':'#2E5FA3'};flex-shrink:0"></div>
       <div class="hol-date">${fmtDate(h.date)}</div>
       <div class="hol-name">${h.name}</div>
       <div style="font-size:11px;color:#888;min-width:130px">Notify by: ${fmtDate(h.reminder)}</div>
       <select style="width:170px;font-size:11px" onchange="saveHolidayStatus('${h.date}',this.value)">
-        ${statusOpts.map(s=>`<option ${s===status?'selected':''}>${s}</option>`).join('')}
+        ${opts.map(s=>`<option${s===status?' selected':''}>${s}</option>`).join('')}
       </select></div>`;
   }).join('');
 }
@@ -649,34 +482,70 @@ async function saveHolidayStatus(date,val){
   else await sb.from('holidays').insert({data:{date,status:val}});
 }
 
-// TEMPLATES
+// ── EMAIL TEMPLATES ───────────────────────────────────────────────────────
+function loadTemplates(){
+  templates=lload('fw_templates',null);
+  if(!templates)templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+}
+function saveTemplates(){lsave('fw_templates',templates);}
 function renderTemplates(){
-  document.getElementById('templates-container').innerHTML=TEMPLATES.map((t,i)=>`
-    <div style="background:white;border:1px solid #e0e7f0;border-radius:8px;margin-bottom:12px;overflow:hidden">
-      <div style="background:#f8faff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eef2f8">
-        <div style="font-size:13px;font-weight:700;color:#1F3864">${t.title}</div>
+  document.getElementById('templates-container').innerHTML=templates.map((t,i)=>`
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <div style="font-size:13px;font-weight:700;color:#1F3864;flex:1">${t.title}</div>
+        <button class="btn btn-amber btn-sm" onclick="openTplModal(${i})">Edit</button>
         <button class="btn btn-primary btn-sm" onclick="copyTemplate(${i})">Copy</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteTemplate(${i})">✕</button>
       </div>
-      <div style="padding:12px 14px">
+      <div class="tpl-body">
         <div style="font-size:11px;color:#888;margin-bottom:6px">Subject: <strong>${t.subject}</strong></div>
         <div style="font-size:12px;color:#333;line-height:1.7;white-space:pre-wrap;background:#f8faff;border-radius:6px;padding:10px 12px;border:1px solid #eef2f8">${t.body}</div>
-      </div></div>`).join('');
+      </div>
+    </div>`).join('');
 }
 function copyTemplate(i){
-  const t=TEMPLATES[i];
-  navigator.clipboard.writeText('Subject: '+t.subject+'\n\n'+t.body).then(()=>{alert('Copied!');});
+  const t=templates[i];
+  navigator.clipboard.writeText('Subject: '+t.subject+'\n\n'+t.body).then(()=>alert('Copied!'));
 }
+function deleteTemplate(i){
+  if(!confirm('Delete this template?'))return;
+  templates.splice(i,1);saveTemplates();renderTemplates();
+}
+function openTplModal(i){
+  document.getElementById('tpl-edit-idx').value=i;
+  if(i===-1){
+    document.getElementById('tpl-modal-title').textContent='Add Email Template';
+    document.getElementById('tpl-title-input').value='';
+    document.getElementById('tpl-subject-input').value='';
+    document.getElementById('tpl-body-input').value='';
+  } else {
+    const t=templates[i];
+    document.getElementById('tpl-modal-title').textContent='Edit Template';
+    document.getElementById('tpl-title-input').value=t.title;
+    document.getElementById('tpl-subject-input').value=t.subject;
+    document.getElementById('tpl-body-input').value=t.body;
+  }
+  document.getElementById('tpl-modal').classList.add('open');
+}
+function saveTplModal(){
+  const i=parseInt(document.getElementById('tpl-edit-idx').value);
+  const t={title:document.getElementById('tpl-title-input').value.trim(),
+    subject:document.getElementById('tpl-subject-input').value.trim(),
+    body:document.getElementById('tpl-body-input').value.trim()};
+  if(!t.title)return alert('Title required');
+  if(i===-1)templates.push(t);else templates[i]=t;
+  saveTemplates();closeTplModal();renderTemplates();
+}
+function closeTplModal(){document.getElementById('tpl-modal').classList.remove('open');}
 
-// CHECKLIST — localStorage (kişisel, her gün sıfırlanır)
-const lsave=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-const lload=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v!==null?v:d;}catch{return d;}};
+// ── CHECKLIST ─────────────────────────────────────────────────────────────
 function renderChecklist(){
   const checked=lload('fw_cl_'+today(),[]);
   document.getElementById('checklist-container').innerHTML=CHECKLIST_STEPS.map((s,i)=>{
     const c=checked.includes(i);
-    return `<div class="checklist-item ${c?'checked':''}">
-      <div class="time-badge ${s.warn?'warn':''}">${s.time}</div>
-      <input type="checkbox" id="chk${i}" ${c?'checked':''} onchange="toggleCheck(${i})">
+    return `<div class="checklist-item${c?' checked':''}">
+      <div class="time-badge${s.warn?' warn':''}">${s.time}</div>
+      <input type="checkbox" id="chk${i}"${c?' checked':''} onchange="toggleCheck(${i})">
       <label for="chk${i}"><strong>${s.title}</strong><span>${s.detail}</span></label>
     </div>`;
   }).join('');
@@ -687,38 +556,189 @@ function toggleCheck(i){
 }
 function resetChecklist(){lsave('fw_cl_'+today(),[]);renderChecklist();}
 
-// INIT
+// ── FAQ ───────────────────────────────────────────────────────────────────
+function loadFaq(){
+  faqData=lload('fw_faq',null);
+  if(!faqData)faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
+}
+function saveFaq(){lsave('fw_faq',faqData);}
+function resetFaq(){
+  if(!confirm('Reset FAQ to default? All edits will be lost.'))return;
+  faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
+  saveFaq();renderFaq();
+}
+
+function renderFaq(filter){
+  filter=filter||'';
+  const fl=filter.toLowerCase();
+  const container=document.getElementById('faq-container');
+  if(!container)return;
+  let html='';
+  for(let si=0;si<faqData.length;si++){
+    const section=faqData[si];
+    const items=fl?section.items.filter(function(it){return (it.q+it.a).toLowerCase().includes(fl);}):section.items;
+    if(fl&&!items.length)continue;
+    html+='<div class="faq-section">';
+    html+='<div class="faq-section-header">';
+    html+='<div class="faq-section-title">'+section.section+'</div>';
+    html+='<div style="display:flex;gap:5px">';
+    html+='<button class="btn btn-primary btn-sm" onclick="addFaqItem('+si+')">+ Q&A</button>';
+    html+='<button class="btn btn-danger btn-sm" onclick="deleteFaqSection('+si+')">✕ Section</button>';
+    html+='</div></div>';
+    for(let ii=0;ii<items.length;ii++){
+      const realIdx=section.items.indexOf(items[ii]);
+      const item=items[ii];
+      html+='<div class="faq-item">';
+      html+='<div class="faq-q" onclick="toggleFaqA('+si+','+realIdx+')">';
+      html+='<div class="faq-q-text">Q: '+escHtml(item.q)+'</div>';
+      html+='<div class="faq-q-actions">';
+      html+='<button class="btn btn-amber btn-sm" onclick="event.stopPropagation();openFaqEdit('+si+','+realIdx+')">Edit</button>';
+      html+='<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteFaqItem('+si+','+realIdx+')">✕</button>';
+      html+='</div></div>';
+      html+='<div class="faq-a" id="fa-'+si+'-'+realIdx+'">';
+      if(item.warn)html+='<div class="faq-warn">⚠ Always escalate to Emina. Do not handle alone.</div>';
+      html+='<div style="white-space:pre-wrap">'+escHtml(item.a)+'</div>';
+      // Screenshots
+      var imgs=item.imgs||[];
+      if(imgs.length){
+        html+='<div class="faq-screenshots">';
+        for(var k=0;k<imgs.length;k++){
+          html+='<div class="screenshot-thumb">';
+          html+='<img src="'+imgs[k]+'" onclick="openImgModal(\''+imgs[k]+'\')" title="Click to enlarge">';
+          html+='<button class="rm-img" onclick="deleteFaqImg('+si+','+realIdx+','+k+')">✕</button>';
+          html+='</div>';
+        }
+        html+='</div>';
+      }
+      html+='</div>';
+      html+='<div class="faq-edit-panel" id="fe-'+si+'-'+realIdx+'">';
+      html+='<div class="form-group" style="margin-bottom:7px"><label>Question</label>';
+      html+='<input type="text" id="feq-'+si+'-'+realIdx+'" value="'+escAttr(item.q)+'"></div>';
+      html+='<div class="form-group" style="margin-bottom:7px"><label>Answer</label>';
+      html+='<textarea id="fea-'+si+'-'+realIdx+'" style="min-height:100px">'+escHtml(item.a)+'</textarea></div>';
+      html+='<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">';
+      html+='<button class="btn btn-primary btn-sm" onclick="saveFaqItem('+si+','+realIdx+')">Save</button>';
+      html+='<button class="btn btn-danger btn-sm" onclick="closeFaqEdit('+si+','+realIdx+')">Cancel</button>';
+      html+='<label style="font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer">';
+      html+='<input type="checkbox" id="few-'+si+'-'+realIdx+'"'+(item.warn?' checked':'')+'>  Escalate to Emina</label>';
+      html+='<label class="btn btn-green btn-sm" style="cursor:pointer">📷 Add Screenshot';
+      html+='<input type="file" accept="image/*" multiple style="display:none" onchange="uploadFaqImg('+si+','+realIdx+',this)">';
+      html+='</label>';
+      html+='</div></div></div>';
+    }
+    html+='</div>';
+  }
+  container.innerHTML=html||'<div style="color:#888;font-size:12px;padding:20px">No results found.</div>';
+}
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escAttr(s){return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+function toggleFaqA(si,ii){
+  const a=document.getElementById('fa-'+si+'-'+ii);
+  const e=document.getElementById('fe-'+si+'-'+ii);
+  if(e&&e.classList.contains('open'))return;
+  if(a)a.classList.toggle('open');
+}
+function openFaqEdit(si,ii){
+  document.querySelectorAll('.faq-edit-panel').forEach(function(e){e.classList.remove('open');});
+  document.querySelectorAll('.faq-a').forEach(function(e){e.classList.remove('open');});
+  const e=document.getElementById('fe-'+si+'-'+ii);
+  if(e)e.classList.add('open');
+}
+function closeFaqEdit(si,ii){
+  const e=document.getElementById('fe-'+si+'-'+ii);
+  if(e)e.classList.remove('open');
+}
+function saveFaqItem(si,ii){
+  faqData[si].items[ii].q=document.getElementById('feq-'+si+'-'+ii).value;
+  faqData[si].items[ii].a=document.getElementById('fea-'+si+'-'+ii).value;
+  faqData[si].items[ii].warn=document.getElementById('few-'+si+'-'+ii).checked;
+  saveFaq();
+  const inp=document.getElementById('faq-search-input');
+  renderFaq(inp?inp.value:'');
+}
+function deleteFaqItem(si,ii){
+  if(!confirm('Delete this Q&A?'))return;
+  faqData[si].items.splice(ii,1);saveFaq();renderFaq();
+}
+function addFaqItem(si){
+  faqData[si].items.push({q:'New question',a:'Answer here...',warn:false});
+  saveFaq();renderFaq();
+  setTimeout(function(){openFaqEdit(si,faqData[si].items.length-1);},60);
+}
+function addFaqSection(){
+  const name=prompt('Section name (e.g. "10. New Topic"):');
+  if(!name)return;
+  faqData.push({section:name,items:[{q:'First question',a:'Answer here...',warn:false}]});
+  saveFaq();renderFaq();
+  setTimeout(function(){openFaqEdit(faqData.length-1,0);},60);
+}
+function deleteFaqSection(si){
+  if(!confirm('Delete entire section "'+faqData[si].section+'"?'))return;
+  faqData.splice(si,1);saveFaq();renderFaq();
+}
+
+
+// ── SCREENSHOTS ───────────────────────────────────────────────────────────
+function openImgModal(src){
+  document.getElementById('img-modal-src').src=src;
+  document.getElementById('img-modal').classList.add('open');
+}
+function uploadFaqImg(si,ii,input){
+  const files=Array.from(input.files);
+  if(!files.length)return;
+  let done=0;
+  files.forEach(function(file){
+    const reader=new FileReader();
+    reader.onload=function(e){
+      if(!faqData[si].items[ii].imgs)faqData[si].items[ii].imgs=[];
+      faqData[si].items[ii].imgs.push(e.target.result);
+      done++;
+      if(done===files.length){
+        saveFaq();
+        const inp=document.getElementById('faq-search-input');
+        renderFaq(inp?inp.value:'');
+        // Reopen edit panel
+        setTimeout(function(){openFaqEdit(si,ii);},60);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function deleteFaqImg(si,ii,imgIdx){
+  if(!confirm('Remove this screenshot?'))return;
+  faqData[si].items[ii].imgs.splice(imgIdx,1);
+  saveFaq();
+  const inp=document.getElementById('faq-search-input');
+  renderFaq(inp?inp.value:'');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
 async function init(){
   setSyncStatus('saving','Loading...');
   document.getElementById('today-header').textContent=todayLabel();
-  document.getElementById('daily-date-badge').textContent=todayLabel();
   document.getElementById('checklist-date').textContent=todayLabel();
 
-  // Load all data from Supabase
-  [clients,team,daily,wire,returned,support]=await Promise.all([
-    sbLoad('clients'),sbLoad('team'),sbLoad('daily'),sbLoad('wire'),sbLoad('returned'),sbLoad('support')
-  ]);
+  clients=await sbLoad('clients');
 
-  // Seed default clients if empty
-  if(clients.length===0){
-    for(const c of DEFAULT_CLIENTS){
-      const saved=await sbInsert('clients',c);
-      if(saved)clients.push(saved);
-    }
-  }
-  // Seed default team if empty
-  if(team.length===0){
-    for(const p of DEFAULT_TEAM){
-      const saved=await sbInsert('team',p);
-      if(saved)team.push(saved);
-    }
+  // Reseed clients cleanly
+  for(let i=0;i<clients.length;i++){await sbDelete('clients',clients[i]._id);}
+  clients=[];
+  for(let j=0;j<DEFAULT_CLIENTS.length;j++){
+    const saved=await sbInsert('clients',DEFAULT_CLIENTS[j]);
+    if(saved)clients.push(saved);
   }
 
   setSyncStatus('ok','Connected');
-  populateSelects();renderClients();renderDaily();renderWire();
-  renderReturned();renderSupport();renderSupportFilters();
-  renderMap();await renderHolidays();renderTemplates();renderChecklist();
+  renderClients();
+  await renderHolidays();
+  loadTemplates();renderTemplates();
+  renderChecklist();
+  loadFaq();renderFaq();
+
   document.getElementById('edit-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+  document.getElementById('tpl-modal').addEventListener('click',function(e){if(e.target===this)closeTplModal();});
 }
 init();
 </script>
