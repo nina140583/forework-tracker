@@ -63,6 +63,39 @@ select:focus,input:focus,textarea:focus{outline:2px solid #2E5FA3;border-color:t
 .checklist-item.checked label{text-decoration:line-through;opacity:.4;}
 .time-badge{background:#1F3864;color:white;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:700;flex-shrink:0;min-width:56px;text-align:center;}
 .time-badge.warn{background:#dc2626;}
+
+/* LOGIN SCREEN */
+#login-screen{position:fixed;inset:0;background:#1F3864;display:flex;align-items:center;justify-content:center;z-index:9999;}
+#login-screen.hidden{display:none;}
+.login-box{background:white;border-radius:16px;padding:40px 36px;width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.login-logo{font-size:22px;font-weight:700;color:#1F3864;margin-bottom:6px;}
+.login-sub{font-size:12px;color:#888;margin-bottom:28px;}
+.login-box input[type=password]{font-size:14px;padding:10px 14px;border-radius:8px;border:1px solid #d1d5db;width:100%;margin-bottom:12px;text-align:center;letter-spacing:3px;}
+.login-box input[type=password]:focus{outline:2px solid #2E5FA3;border-color:transparent;}
+.login-box button{width:100%;padding:10px;background:#2E5FA3;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;}
+.login-box button:hover{background:#1F3864;}
+.login-err{color:#dc2626;font-size:12px;margin-top:8px;display:none;}
+
+/* RICH TEXT EDITOR */
+.rte-wrap{border:1px solid #d1d5db;border-radius:6px;overflow:hidden;background:white;}
+.rte-toolbar{display:flex;flex-wrap:wrap;gap:2px;padding:5px 7px;background:#f8faff;border-bottom:1px solid #e0e7f0;}
+.rte-btn{background:white;border:1px solid #e0e7f0;border-radius:4px;padding:3px 7px;cursor:pointer;font-size:12px;font-family:Arial;color:#333;min-width:26px;text-align:center;}
+.rte-btn:hover{background:#e8f0fe;border-color:#2E5FA3;color:#2E5FA3;}
+.rte-btn.active{background:#2E5FA3;color:white;border-color:#2E5FA3;}
+.rte-sep{width:1px;background:#e0e7f0;margin:2px 3px;}
+.rte-editor{min-height:120px;padding:10px 12px;font-size:12px;line-height:1.7;outline:none;color:#333;}
+.rte-editor:focus{outline:none;}
+.rte-editor img{max-width:100%;border-radius:5px;border:1px solid #e0e7f0;margin:6px 0;display:block;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.rte-editor ul,.rte-editor ol{padding-left:20px;margin:4px 0;}
+.rte-editor blockquote{border-left:3px solid #2E5FA3;margin:6px 0;padding:4px 10px;background:#f0f4ff;border-radius:0 5px 5px 0;color:#555;}
+/* FAQ answer display - render HTML */
+.faq-a-content{font-size:12px;line-height:1.7;color:#333;}
+.faq-a-content img{max-width:100%;border-radius:6px;border:1px solid #e0e7f0;margin:8px 0;display:block;cursor:zoom-in;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.faq-a-content ul,.faq-a-content ol{padding-left:20px;margin:4px 0;}
+.faq-a-content strong{font-weight:700;}
+.faq-a-content em{font-style:italic;}
+.faq-a-content blockquote{border-left:3px solid #2E5FA3;margin:6px 0;padding:4px 10px;background:#f0f4ff;border-radius:0 5px 5px 0;}
+.faq-a-content h3{font-size:13px;font-weight:700;color:#1F3864;margin:8px 0 4px;}
 /* FAQ */
 
 /* Screenshots in FAQ */
@@ -84,7 +117,7 @@ select:focus,input:focus,textarea:focus{outline:2px solid #2E5FA3;border-color:t
 .faq-q:hover{background:#fafbff;}
 .faq-q-text{font-size:12px;font-weight:700;color:#2E5FA3;flex:1;}
 .faq-q-actions{display:flex;gap:5px;flex-shrink:0;}
-.faq-a{padding:0 16px 12px;font-size:12px;color:#333;line-height:1.7;display:none;}
+.faq-a{padding:8px 16px 14px;font-size:12px;color:#333;line-height:1.7;display:none;border-top:1px solid #f0f4ff;}
 .faq-a.open{display:block;}
 .faq-edit-panel{display:none;padding:10px 16px 14px;background:#f8faff;border-top:1px solid #eef2f8;}
 .faq-edit-panel.open{display:block;}
@@ -97,6 +130,22 @@ select:focus,input:focus,textarea:focus{outline:2px solid #2E5FA3;border-color:t
 </style>
 </head>
 <body>
+
+<div id="login-screen" style="position:fixed;inset:0;background:#1F3864;display:flex;align-items:center;justify-content:center;z-index:9999;">
+  <div style="background:white;border-radius:16px;padding:40px 36px;width:320px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="font-size:22px;font-weight:700;color:#1F3864;margin-bottom:6px;">🔒 Forework Hub</div>
+    <div style="font-size:12px;color:#888;margin-bottom:28px;">Internal team access only</div>
+    <input type="password" id="pw-input" placeholder="Enter password"
+      style="font-size:14px;padding:10px 14px;border-radius:8px;border:1px solid #d1d5db;width:100%;margin-bottom:12px;text-align:center;letter-spacing:3px;box-sizing:border-box;"
+      onkeydown="if(event.key==='Enter'){checkPw();}">
+    <button onclick="checkPw()"
+      style="width:100%;padding:10px;background:#2E5FA3;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">
+      Sign In
+    </button>
+    <div id="pw-err" style="color:#dc2626;font-size:12px;margin-top:10px;display:none;">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
 <header>
   <div style="display:flex;align-items:center">
     <h1>Forework Operations Hub</h1>
@@ -231,11 +280,14 @@ select:focus,input:focus,textarea:focus{outline:2px solid #2E5FA3;border-color:t
       <div style="font-size:12px;color:#888;margin-top:2px">Internal use only. When unsure, always ask Emina first.</div>
     </div>
     <div style="display:flex;gap:7px">
+      <button class="btn btn-green btn-sm" onclick="addFaqSection()">+ New Category</button>
       <button class="btn btn-danger btn-sm" onclick="resetFaq()">Reset to default</button>
-      <button class="btn btn-green btn-sm" onclick="addFaqSection()">+ Add Section</button>
     </div>
   </div>
-  <div class="faq-search"><input type="text" id="faq-search-input" placeholder="🔍  Search FAQ..." oninput="renderFaq(this.value)"></div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+    <input type="text" id="faq-search-input" placeholder="🔍  Search..." oninput="renderFaq()" style="max-width:200px;font-size:12px;padding:6px 10px;border-radius:8px;">
+    <div id="faq-cat-filters" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;"></div>
+  </div>
   <div id="faq-container"></div>
 </div>
 
@@ -293,51 +345,39 @@ const CHECKLIST_STEPS=[
 ];
 
 const DEFAULT_FAQ=[
-  {section:"1. NatPay & Payroll Processing",items:[
-    {q:"What is NatPay and what is our role?",a:"NatPay (my.directdeposit.com) processes direct deposit for all Forework clients. When a client finalizes payroll, the support team downloads the payroll file and uploads it to NatPay.\n\nYou will receive 3 email notifications per payroll:\n1. File uploaded successfully to NatPay\n2. Bank request sent to client's bank\n3. Funds received from client's bank\n\nIf notification #3 does not arrive, contact NatPay immediately — the client's bank may not have released the funds.\nNatPay phone: (813) 222-0333 | Email: csr@natpay.com",warn:false},
-    {q:"What is the difference between ACH, Reverse Wire, Wire, and Sameday Wire?",a:"ACH (standard): 1–2 business days. Most common, no extra fee. Default for most clients.\n\nReverse Wire: NatPay pulls money from the client's bank automatically. Default for some clients like Mrs. G's.\n\nWire: Client goes to their bank and manually sends money to NatPay. Faster than ACH. Used when client misses the ACH window.\n\nSameday Wire: Client initiates a manual wire by 12:00 PM EST → employees receive funds by 5:00 PM same day. Costs client an extra $150.\n\nWhen a client misses the deadline: check if reverse wire is still possible. If not, ask Emina whether to offer sameday wire.",warn:false},
-    {q:"What are the daily deadlines?",a:"09:00 AM — Check which clients have payroll today\n11:00 AM — Follow up with clients who have not submitted\n01:00 PM — Escalate if still no submission — contact Emina\n02:00 PM — DEADLINE: Payroll file must be received\n02:30 PM — DEADLINE: Upload to NatPay\nAfter 02:30 PM — If late, sameday wire process starts (+$150 fee to client)",warn:false},
-    {q:"A client missed the payroll deadline. What do I do?",a:"1. Check if ACH or reverse wire is still possible — call NatPay: (813) 222-0333 or csr@natpay.com\n2. If too late, ask Emina whether to offer Sameday Wire (+$150 fee)\n3. Client must initiate wire from their bank by 12:00 PM EST\n4. Upload file to NatPay and confirm receipt\n\nAlways add $150 to the client's invoice when sameday wire is used.",warn:false},
-    {q:"A client's bank is not releasing funds on time. What do I do?",a:"1. Monitor the 3rd NatPay notification (funds received). If it does not arrive by end of day, act immediately\n2. Contact the client and inform them their bank has not released funds\n3. Ask the client to call their bank directly and request a manual wire transfer to NatPay\n4. Contact Emina to inform her of the situation\n\nNote: Red Sun Home Care frequently misses the ACH deadline — monitor their submissions every Tuesday by 5:00 PM and be ready for a wire.",warn:false},
+  {section:"Payroll",items:[
+    {q:"What are the daily payroll deadlines?",a:"<ul><li><strong>09:00 AM</strong> — Check which clients have payroll today</li><li><strong>11:00 AM</strong> — Follow up with clients who have not submitted</li><li><strong>01:00 PM</strong> — Escalate to Emina if still no submission</li><li><strong>02:00 PM</strong> — DEADLINE: Payroll file must be received</li><li><strong>02:30 PM</strong> — DEADLINE: Upload to NatPay</li><li><strong>After 02:30 PM</strong> — Sameday wire starts (+$150 fee to client)</li></ul>",warn:false,imgs:[]},
+    {q:"A client missed the payroll deadline. What do I do?",a:"<ol><li>Check if ACH or reverse wire is still possible — call NatPay: <strong>(813) 222-0333</strong> or csr@natpay.com</li><li>If too late, ask Emina whether to offer Sameday Wire (+$150 fee)</li><li>Client must initiate wire from their bank by 12:00 PM EST</li><li>Upload file to NatPay and confirm receipt</li></ol><blockquote>Always add $150 to the client invoice when sameday wire is used.</blockquote>",warn:false,imgs:[]},
+    {q:"A client wants to change a finalized payroll. Is that possible?",a:"<strong>No.</strong> Once finalized, a payroll is locked — no changes possible.<br><br>Tell the client: <em>'A new supplemental payroll must be created.'</em><br><br><blockquote>⚠ Quarter-end open payrolls block quarterly tax filings. Always HIGH PRIORITY.</blockquote>",warn:true,imgs:[]},
+    {q:"What is a supplemental payroll?",a:"An off-cycle payroll run used to pay employees outside the regular schedule — typically for bonuses, corrections, or missed pay.<br><br>If created by mistake and employees already paid: client should <strong>DELETE</strong> it.<br><br><blockquote>Open supplemental payrolls during quarter-end block tax filings — HIGH PRIORITY.</blockquote>",warn:false,imgs:[]},
+    {q:"A client says a garnishment was set up with the wrong bank account.",a:"<strong>Do NOT try to fix the bank account yourself.</strong><br>Escalate to Emina immediately.<br><br>Garnishment errors have caused manual replacement checks in the past.",warn:true,imgs:[]},
+    {q:"A client says an employee cannot log in or see the admin panel.",a:"<ol><li>Log in to UKG as a Forework admin</li><li>Find the user and update their role to admin</li><li>Log in as the user to verify all menus are visible</li><li>Ask the client to confirm on their end</li></ol>",warn:false,imgs:[]},
+    {q:"An employee says they cannot clock in or see their timesheet in the app.",a:"<ol><li>Log in to the system as that employee to see what they see</li><li>If clock-in options are visible — the system is working fine</li><li>Ask HR to instruct the employee to: clear app cache, log out/in, or reinstall the app</li><li>If problem persists after cache clear — contact Emina</li></ol><blockquote>Emina: 'Usually it is a cache issue or the employee did not click something correctly.'</blockquote>",warn:false,imgs:[]},
+    {q:"An employee cannot download or print their pay statement (blank PDF).",a:"<strong>Workaround for employee:</strong><ul><li>Try a different browser (Chrome recommended)</li><li>Clear browser cache and try again</li><li>Try on desktop instead of mobile</li></ul><strong>Workaround via Forework support:</strong><ol><li>Go to Pay Statements in that payroll</li><li>Select the employee check using the checkbox on the left</li><li>Click <strong>Utilities</strong> (top right) → Deliver Selected Pay Statements</li><li>Choose destination: employee email</li><li>Uncheck 'Add Non-Negotiable' if sending a live check PDF</li><li>Add a comment and click OK</li></ol>",warn:false,imgs:[]},
   ]},
-  {section:"2. Downloading & Uploading Payroll Files",items:[
-    {q:"How do I download payroll files from the Forework system?",a:"Go to: Maintenance → Administration → Payment Warehouse (ACH)\n\nEach payroll has 3 files:\n- PAYROLL (the payroll file)\n- Tax (tax file)\n- FWBilling (Forework invoice)\n\nSteps:\n1. Tick the checkbox next to all 3 files (or tick 'Page' to select all)\n2. Click 'CREATE EXPORT FILE' button at the top\n3. First popup appears — click OK\n4. Second popup appears — click Download (NOT OK)\n5. Click OK to complete\n\nIMPORTANT: In the second popup you must click Download, not OK. If you click OK without downloading, use View Export History to recover the file.",warn:false},
-    {q:"I clicked OK without downloading. How do I find the file?",a:"Go back to: Maintenance → Administration → Payment Warehouse (ACH)\n1. Click 'VIEW EXPORT HISTORY' at the top right\n2. Find your file by date or payroll name\n3. Download the file from there",warn:false},
-    {q:"How do I upload payroll files to NatPay?",a:"Go to my.directdeposit.com and sign in with your Forework credentials.\n\n1. Click 'Dosya Seç' (Choose File) next to Forework, LLC\n2. Select the payroll file you downloaded from Payment Warehouse\n3. Click Upload\n4. Make sure the method is correct (ACH / Wire / Reverse Wire)\n5. If a notification appears, click Accept\n\nAfter uploading, monitor 3 NatPay email notifications:\n(1) File uploaded\n(2) Bank request sent\n(3) Funds received",warn:false},
+  {section:"NatPay",items:[
+    {q:"What is NatPay and what is our role?",a:"NatPay (<strong>my.directdeposit.com</strong>) processes direct deposit for all Forework clients. We download the payroll file from the system and upload it to NatPay.<br><br><strong>3 email notifications per payroll:</strong><ol><li>File uploaded successfully</li><li>Bank request sent to client's bank</li><li>Funds received from client's bank</li></ol><blockquote>If notification #3 does not arrive by end of day — contact NatPay immediately.<br>📞 (813) 222-0333 | ✉ csr@natpay.com</blockquote>",warn:false,imgs:[]},
+    {q:"What is the difference between ACH, Reverse Wire, Wire, and Sameday Wire?",a:"<ul><li><strong>ACH:</strong> 1–2 business days. Most common, no extra fee. Default for most clients.</li><li><strong>Reverse Wire:</strong> NatPay pulls money from client's bank automatically. Default for some clients (e.g. Mrs. G's).</li><li><strong>Wire:</strong> Client manually sends money to NatPay from their bank. Faster than ACH.</li><li><strong>Sameday Wire:</strong> Client initiates wire by 12:00 PM EST → employees paid by 5:00 PM same day. Costs client <strong>$150 extra</strong>.</li></ul>",warn:false,imgs:[]},
+    {q:"How do I download payroll files from the Forework system?",a:"Go to: <strong>Maintenance → Administration → Payment Warehouse (ACH)</strong><br><br>Each payroll has 3 files: PAYROLL, Tax, FWBilling.<br><ol><li>Tick the checkbox next to all 3 files (or tick 'Page' to select all)</li><li>Click <strong>'CREATE EXPORT FILE'</strong></li><li>First popup — click OK</li><li>Second popup — click <strong>Download</strong> (NOT OK)</li><li>Click OK to complete</li></ol><blockquote>⚠ In the second popup you MUST click Download, not OK.<br>If you clicked OK by mistake: use <strong>VIEW EXPORT HISTORY</strong> to recover the file.</blockquote>",warn:false,imgs:[]},
+    {q:"How do I upload payroll files to NatPay?",a:"Go to <strong>my.directdeposit.com</strong> and sign in.<br><ol><li>Click 'Dosya Seç' (Choose File) next to Forework, LLC</li><li>Select the payroll file from Payment Warehouse</li><li>Click Upload</li><li>Make sure the method is correct (ACH / Wire / Reverse Wire)</li><li>If a notification appears, click Accept</li></ol><blockquote>After uploading, monitor 3 NatPay notifications: (1) file uploaded, (2) bank request sent, (3) funds received.</blockquote>",warn:false,imgs:[]},
+    {q:"I received a returned deposit notice from NatPay. What do I do?",a:"<blockquote>⚠ DEADLINE: 2:00 PM EST same day. Always add $30 to client invoice.</blockquote><ol><li>Open the notice — identify if employee or vendor account</li><li>Email the client using the Returned Deposit template</li><li>Attach the NatPay correction form — client must return by 2:00 PM EST</li><li>Forward completed form to csr@natpay.com</li><li>Save a copy in client folder</li><li>When NatPay confirms, send confirmation email to client</li></ol><strong>Vendor (Live Check):</strong> Forward to Hana — she prints and mails the check.",warn:false,imgs:[]},
+    {q:"NatPay sent a Potential Fraud Detection notice. What do I do?",a:"<strong>STOP. Do not approve or release the flagged deposit yourself.</strong><ol><li>Forward to Emina IMMEDIATELY — Subject: <em>URGENT: NatPay Fraud Alert</em></li><li>Wait for Emina to verify with the client</li><li>Emina replies directly to NatPay to approve or reject</li><li>Do not respond to NatPay until Emina confirms</li></ol><blockquote>Example: Bhrags Home Care Corp, April 7 2026 — two deposits flagged ($1,362 and $1,222 to Sutton Bank pay cards).</blockquote>",warn:true,imgs:[]},
+    {q:"A client's bank is not releasing funds on time.",a:"<ol><li>Monitor the 3rd NatPay notification. If it does not arrive by end of day — act immediately</li><li>Contact the client — inform them their bank has not released funds</li><li>Ask the client to call their bank and request a manual wire to NatPay</li><li>Contact Emina</li></ol><blockquote>Red Sun Home Care frequently misses the ACH deadline — monitor their submissions every Tuesday by 5:00 PM.</blockquote>",warn:false,imgs:[]},
+    {q:"What types of emails does NatPay send us and what do they mean?",a:"NatPay sends 4 types of emails. Here is what each one means and what to do:<br><br><strong>1. 📧 Wire Receipt Confirmation</strong><br>Subject contains: <em>'Wire Receipt Confirmation'</em><br>Meaning: NatPay received the wire from the client's bank. Payroll will be funded.<br>Action: Log it, no further action needed.<br><br><strong>2. 📧 Transmission Verification</strong><br>Subject contains: <em>'Transmission Verification'</em><br>Meaning: The payroll file was successfully uploaded and processed by NatPay. Shows deposit and withdrawal totals — they should match (net = $0.00).<br>Action: Verify total deposit = total withdraw. If they don't match, contact Emina immediately.<br><br><strong>3. 📧 Pending Return (Correction Form)</strong><br>Subject contains: <em>'Pending Return'</em><br>Meaning: A deposit was returned (e.g. Account Closed). NatPay has new account info and will reprocess unless you instruct otherwise before the deadline.<br>Action: <ol><li>Read carefully — note the employee name, amount, and reprocess date</li><li>Contact the client to confirm the new account info is correct</li><li>If correct, no action needed — NatPay will reprocess automatically</li><li>If incorrect, update via my.directdeposit.com → Returns menu, or fax/email the correction form to NatPay</li><li>Add $30 fee to client invoice</li></ol><br><strong>4. 📧 Early Return Item Notice</strong><br>Subject contains: <em>'Early Return Item Notice'</em><br>Meaning: A deposit was returned (e.g. No Account Found, R03). NatPay does NOT have correct account info — you must provide it.<br>Action: <ol><li>Send the NatPay <strong>correction form</strong> to the client — they must fill in the correct bank account info and sign it</li><li>Once the client sends the form back, forward it to <strong>csr@natpay.com</strong></li><li>Add <strong>$30</strong> fee to client invoice</li><li>Save a copy in the client folder</li></ol>",warn:false,imgs:[]},
+    {q:"What is the difference between a Pending Return and an Early Return?",a:"<strong>Pending Return:</strong><br>NatPay already has a new account on file and will reprocess automatically on the effective date — unless you send different instructions before the deadline (usually 3:30 PM ET).<br>The form shows: Original account info + Reprocess account info.<br>Example reason: <em>Account Closed</em><br><br><strong>Early Return Item Notice:</strong><br>NatPay does NOT have a new account. The deposit was returned and you must provide the corrected bank info.<br>The form shows: Original account info + empty Corrected Information fields.<br>Example reason: <em>No Account / Unable to Locate Account (R03)</em><br><br><strong>What to do:</strong><ol><li>Send the correction form to the client</li><li>Client fills in correct bank info and signs</li><li>Forward the completed form to <strong>csr@natpay.com</strong></li></ol><blockquote>Both types require a $30 fee added to the client invoice and the client must be notified immediately.</blockquote>",warn:false,imgs:[]},
   ]},
-  {section:"3. Returned Deposits",items:[
-    {q:"I received a returned deposit notice from NatPay. What do I do?",a:"DEADLINE: 2:00 PM EST same day. Always add $30 to client invoice.\n\n1. Open the notice immediately — identify if it is an employee or vendor account\n2. Email the client using the Returned Deposit template (see Email Templates tab)\n3. Attach the NatPay correction form — client must return it by 2:00 PM EST same day\n4. Once received, forward the completed form to csr@natpay.com\n5. Save a copy in the client folder\n6. When NatPay confirms reprocessing, send confirmation email to client\n\nIf client does not respond by 2:00 PM EST, funds are returned to the employer.",warn:false},
-    {q:"What if it is a vendor account, not an employee?",a:"Vendor (ACH/Wire): Same process as employee — NatPay correction form, 2:00 PM deadline, $30 fee.\n\nVendor (Live Check): Forward the notice to Hana — she prints and mails the check. No further action needed from support.",warn:false},
+  {section:"New Hire",items:[
+    {q:"What is NYS New Hire Reporting and why do we do it?",a:"New York State requires all employers to report newly hired and rehired employees within <strong>20 calendar days</strong> of their start date.<br><br><strong>Each report includes:</strong><ul><li>Employee name, address, SSN, hire date</li><li>Employer name, address, and FEIN</li></ul><blockquote>This is a legal requirement — not optional. Submit twice a month to stay within the 20-day window.</blockquote>",warn:false,imgs:[]},
+    {q:"I received a New Hire Report file in the support email. What do I do?",a:"<ol><li>Save the file from the support email</li><li>Go to: <strong>https://www.nynewhire.com/#/login</strong></li><li>Sign in with your credentials</li><li>Click Browse → select the file</li><li>Click Upload</li><li>Click OK to confirm</li></ol><blockquote>Upload twice a month to stay within the 20-day legal requirement.</blockquote>",warn:false,imgs:[]},
+    {q:"NYS Secure Choice Savings Program — what is it and what do we do?",a:"A mandatory state-run retirement savings program. Employers must automatically enroll employees in an IRA funded through payroll deductions.<br><br><strong>Currently affects:</strong> Red Sun Home Care, 1st Class Home Care.<br><br><strong>Employer steps:</strong><ol><li>Receive access code from the state (by mail or email)</li><li>Register at securechoice.ny.gov using EIN + access code</li><li>Upload employee census data (name, SSN, DOB, contact info)</li><li>State contacts employees — 30 days to opt out or adjust</li><li>After 30 days, begin payroll deductions (default <strong>3%</strong> of gross wages)</li><li>Remit deductions to Vestwell each pay period</li></ol><blockquote>New hires must be enrolled within 30 days of hire date. Employers cannot advise employees to opt out.</blockquote>",warn:false,imgs:[]},
   ]},
-  {section:"4. Potential Fraud Alerts",items:[
-    {q:"NatPay sent a Potential Fraud Detection notice. What do I do?",a:"STOP. Do not approve or release the flagged deposit yourself.\n\n1. Forward the NatPay fraud notice to Emina IMMEDIATELY\n   Subject line: URGENT: NatPay Fraud Alert\n2. Wait for Emina to verify with the client whether the bank account change was legitimate\n3. Emina will reply directly to NatPay to approve or reject\n4. Do not respond to NatPay until Emina has confirmed\n\nReal example: Bhrags Home Care Corp, April 7 2026 — two deposits flagged ($1,362 and $1,222 to Sutton Bank pay cards).",warn:true},
-    {q:"How do I recognize a fraud alert email from NatPay?",a:"Subject line contains: 'Potential Fraud Report' or 'Potential Fraud Detection'\n\nThe email includes:\n- NPC Account number\n- Client company name\n- Employee name\n- Deposit amount\n- Pay card company name (e.g. Sutton Bank)",warn:false},
-  ]},
-  {section:"5. Client System Issues",items:[
-    {q:"A client says an employee cannot log in or see the admin panel.",a:"1. Log in to UKG as a Forework admin\n2. Find the user and update their role to admin\n3. Log in as the user to verify all menus and staff are visible\n4. Ask the client to confirm on their end",warn:false},
-    {q:"A client wants to change a finalized payroll. Is that possible?",a:"No. Once a payroll is finalized it is locked — no date or content changes are possible.\n\nTell the client: 'There is no way to apply new dates to an already finalized payroll. A new supplemental payroll must be created.'\n\nQUARTER-END WARNING: Open payrolls during quarter-end block quarterly tax filings. Always treat as HIGH PRIORITY.",warn:true},
-    {q:"Employee list shows 0 employees or $0 salaries. What do I do?",a:"This usually happens after a data migration (e.g. new EIN). Escalate to Emina — TBD process.",warn:true},
-  ]},
-  {section:"6. Employee Login & App Issues",items:[
-    {q:"An employee says they cannot clock in or see their timesheet in the app.",a:"1. Log in to the system as that employee (without them) to see what they see\n2. If clock-in options are visible — the system is working fine\n3. Ask HR to instruct the employee to: clear app cache, log out and back in, or reinstall the app\n4. If problem persists after cache clear — contact Emina\n\nNote from Emina: 'Usually there is no problem — it is a cache issue or the employee did not click something correctly.'",warn:false},
-    {q:"An employee cannot download or print their pay statement (blank PDF).",a:"This is a known issue with some browsers/devices.\n\nWorkaround for employee:\n1. Try a different browser (Chrome recommended)\n2. Clear browser cache and try again\n3. Try on a desktop instead of mobile\n\nWorkaround via Forework support:\n1. Go to Pay Statements in that payroll\n2. Select the employee's check using the checkbox on the left\n3. Click Utilities (top right) → Deliver Selected Pay Statements\n4. Choose destination: Client Email or employee's email\n5. Uncheck 'Add Non-Negotiable' if sending a live check PDF\n6. Add a comment and click OK — employee receives PDF by email",warn:false},
-    {q:"A client says they cannot reach support by phone.",a:"1. Acknowledge immediately by email\n2. Ask them to send the issue in writing to support@forework.com\n3. Forward to Emina with a summary\n\nNever leave a client without a response — even a brief acknowledgment is enough.",warn:false},
-  ]},
-  {section:"7. Garnishment & Supplemental Payroll",items:[
-    {q:"What is a supplemental payroll?",a:"A supplemental payroll is an additional off-cycle payroll run used to pay employees outside the regular schedule. Typically used for bonuses, corrections, or missed pay.\n\nIf created by mistake and employees have already been paid: the client should DELETE it. If deleted, taxes for that period may need to be corrected.\n\nQUARTER-END: Open supplemental payrolls block tax filings. Always treat as HIGH PRIORITY.",warn:false},
-    {q:"A client says a garnishment was set up with the wrong bank account.",a:"Do NOT try to fix the bank account yourself. Escalate to Emina immediately.\n\nGarnishment errors have caused manual replacement checks in the past.",warn:true},
-  ]},
-  {section:"8. NYS New Hire Reporting",items:[
-    {q:"What is NYS New Hire Reporting and why do we do it?",a:"New York State requires all employers to report newly hired and rehired employees within 20 calendar days of their start date.\n\nEach report includes: employee name, address, SSN, hire date, and employer name, address, and FEIN.\n\nThis is a legal requirement — not optional. Submit twice a month to stay within the 20-day window.",warn:false},
-    {q:"I received a New Hire Report file in the support email. What do I do?",a:"1. You will receive an email with an attachment — save the file\n2. Click the link in the email OR go to: https://www.nynewhire.com/#/login\n3. Sign in with your credentials\n4. Click Browse → select the file\n5. Click Upload\n6. Click OK to confirm\n\nUpload twice a month to stay within the 20-day legal requirement.",warn:false},
-  ]},
-  {section:"9. Tax Refunds",items:[
-    {q:"How do we process a tax refund for a client?",a:"1. Milea receives an email from the ReadyTax team indicating a refund needs to be processed, with the amount and reason\n2. Milea confirms the refund with Emina (Emina is involved in all tax-related communications)\n3. Log into the Forework system:\n   - Homepage: find the company and press the 3rd button from the left (shown with red circle)\n   - Go to the hamburger menu → select Bank Account\n   - Press the pencil icon to view the company's bank info\n4. Go to the Mirror page → navigate to the ACH Warehouse section\n5. Create a new manual ACH entry with:\n   - Company name (client receiving the refund)\n   - Click to flag\n   - Credit amount to refund\n   - Client's bank account info (routing number, account number)\n   - Forework's bank account info for the debit\n   - A comment explaining the reason for the refund\n6. Export the ACH file and upload it to NatPay to process the refund\n7. Follow up with the client to notify them the refund has been processed\n\nNote: You will need Forework's bank account info for the debit entry — ask Emina for access if you do not have it.",warn:false},
+  {section:"Tax Refund",items:[
+    {q:"How do we process a tax refund for a client?",a:"<ol><li>Milea receives an email from the ReadyTax team with the refund amount and reason</li><li>Milea confirms with <strong>Emina</strong> (involved in all tax communications)</li><li>Log into Forework system:<ul><li>Homepage: find company → press the <strong>3rd button from the left</strong></li><li>Go to hamburger menu → select <strong>Bank Account</strong></li><li>Press the pencil icon to view company bank info</li></ul></li><li>Go to Mirror page → navigate to <strong>ACH Warehouse</strong></li><li>Create a new manual ACH entry:<ul><li>Company name (client receiving refund)</li><li>Click to flag</li><li>Credit amount to refund</li><li>Client bank account info (routing + account number)</li><li>Forework bank account info for the debit</li><li>Comment explaining the reason</li></ul></li><li>Export the ACH file and upload to NatPay</li><li>Follow up with client to confirm refund processed</li></ol><blockquote>You need Forework bank account info for the debit — ask Emina for access if needed.</blockquote>",warn:false,imgs:[]},
   ]},
 ];
 
 // ── STATE ─────────────────────────────────────────────────────────────────
-let clients=[], faqData=[], templates=[], clientFilter='all';
+let clients=[], faqData=[], templates=[], clientFilter='all', faqCatFilter='all';
 
 // ── SUPABASE HELPERS ──────────────────────────────────────────────────────
 function setSyncStatus(state,msg){
@@ -483,11 +523,19 @@ async function saveHolidayStatus(date,val){
 }
 
 // ── EMAIL TEMPLATES ───────────────────────────────────────────────────────
+const TPL_VERSION='v2';
 function loadTemplates(){
-  templates=lload('fw_templates',null);
-  if(!templates)templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+  var sv=localStorage.getItem('fw_tpl_version');
+  if(sv!==TPL_VERSION){
+    templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+    saveTemplates();
+    localStorage.setItem('fw_tpl_version',TPL_VERSION);
+  } else {
+    templates=lload('fw_templates',null);
+    if(!templates)templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+  }
 }
-function saveTemplates(){lsave('fw_templates',templates);}
+function saveTemplates(){lsave('fw_templates',templates);localStorage.setItem('fw_tpl_version',TPL_VERSION);}
 function renderTemplates(){
   document.getElementById('templates-container').innerHTML=templates.map((t,i)=>`
     <div class="tpl-card">
@@ -557,25 +605,54 @@ function toggleCheck(i){
 function resetChecklist(){lsave('fw_cl_'+today(),[]);renderChecklist();}
 
 // ── FAQ ───────────────────────────────────────────────────────────────────
+const FAQ_VERSION='v4'; // bump this when DEFAULT_FAQ changes
 function loadFaq(){
-  faqData=lload('fw_faq',null);
-  if(!faqData)faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
+  var storedVersion=localStorage.getItem('fw_faq_version');
+  if(storedVersion!==FAQ_VERSION){
+    // New version detected — reset to latest DEFAULT_FAQ
+    faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
+    saveFaq();
+    localStorage.setItem('fw_faq_version',FAQ_VERSION);
+  } else {
+    faqData=lload('fw_faq',null);
+    if(!faqData)faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
+  }
 }
-function saveFaq(){lsave('fw_faq',faqData);}
+function saveFaq(){lsave('fw_faq',faqData);localStorage.setItem('fw_faq_version',FAQ_VERSION);}
 function resetFaq(){
   if(!confirm('Reset FAQ to default? All edits will be lost.'))return;
   faqData=JSON.parse(JSON.stringify(DEFAULT_FAQ));
   saveFaq();renderFaq();
 }
 
+function renderFaqFilters(){
+  var el=document.getElementById('faq-cat-filters');
+  if(!el)return;
+  var btns=[{label:'All',cat:'all'}];
+  faqData.forEach(function(s){btns.push({label:s.section,cat:s.section});});
+  el.innerHTML=btns.map(function(b){
+    var active=faqCatFilter===b.cat;
+    return '<button class="filter-btn'+(active?' active':'')+'" onclick="setFaqCat(this.dataset.cat)" data-cat="'+b.cat+'">'+b.label+'</button>';
+  }).join('');
+}
+function setFaqCat(cat){
+  faqCatFilter=cat;
+  document.getElementById('faq-search-input').value='';
+  renderFaqFilters();
+  renderFaq();
+}
 function renderFaq(filter){
-  filter=filter||'';
+  var inp=document.getElementById('faq-search-input');
+  if(filter===undefined){filter=inp?inp.value:'';}
+  renderFaqFilters();
   const fl=filter.toLowerCase();
   const container=document.getElementById('faq-container');
   if(!container)return;
   let html='';
   for(let si=0;si<faqData.length;si++){
     const section=faqData[si];
+    // Category filter
+    if(faqCatFilter!=='all'&&section.section!==faqCatFilter)continue;
     const items=fl?section.items.filter(function(it){return (it.q+it.a).toLowerCase().includes(fl);}):section.items;
     if(fl&&!items.length)continue;
     html+='<div class="faq-section">';
@@ -597,33 +674,34 @@ function renderFaq(filter){
       html+='</div></div>';
       html+='<div class="faq-a" id="fa-'+si+'-'+realIdx+'">';
       if(item.warn)html+='<div class="faq-warn">⚠ Always escalate to Emina. Do not handle alone.</div>';
-      html+='<div style="white-space:pre-wrap">'+escHtml(item.a)+'</div>';
-      // Screenshots
-      var imgs=item.imgs||[];
-      if(imgs.length){
-        html+='<div class="faq-screenshots">';
-        for(var k=0;k<imgs.length;k++){
-          html+='<div class="screenshot-thumb">';
-          html+='<img src="'+imgs[k]+'" onclick="openImgModal(\''+imgs[k]+'\')" title="Click to enlarge">';
-          html+='<button class="rm-img" onclick="deleteFaqImg('+si+','+realIdx+','+k+')">✕</button>';
-          html+='</div>';
-        }
-        html+='</div>';
-      }
+      html+='<div class="faq-a-content" onclick="handleFaqImgClick(event)">'+sanitizeHtml(item.a)+'</div>';
       html+='</div>';
       html+='<div class="faq-edit-panel" id="fe-'+si+'-'+realIdx+'">';
       html+='<div class="form-group" style="margin-bottom:7px"><label>Question</label>';
       html+='<input type="text" id="feq-'+si+'-'+realIdx+'" value="'+escAttr(item.q)+'"></div>';
       html+='<div class="form-group" style="margin-bottom:7px"><label>Answer</label>';
-      html+='<textarea id="fea-'+si+'-'+realIdx+'" style="min-height:100px">'+escHtml(item.a)+'</textarea></div>';
+      html+='<div class="rte-wrap">';
+      html+='<div class="rte-toolbar">';
+      html+='<button class="rte-btn" onclick="rteCmd(\'fea-'+si+'-'+realIdx+'\',\'bold\')" title="Bold"><b>B</b></button>';
+      html+='<button class="rte-btn" onclick="rteCmd(\'fea-'+si+'-'+realIdx+'\',\'italic\')" title="Italic"><i>I</i></button>';
+      html+='<button class="rte-btn" onclick="rteCmd(\'fea-'+si+'-'+realIdx+'\',\'underline\')" title="Underline"><u>U</u></button>';
+      html+='<div class="rte-sep"></div>';
+      html+='<button class="rte-btn" onclick="rteCmd(\'fea-'+si+'-'+realIdx+'\',\'insertUnorderedList\')" title="Bullet list">• List</button>';
+      html+='<button class="rte-btn" onclick="rteCmd(\'fea-'+si+'-'+realIdx+'\',\'insertOrderedList\')" title="Numbered list">1. List</button>';
+      html+='<div class="rte-sep"></div>';
+      html+='<button class="rte-btn" onclick="rteHeading(\'fea-'+si+'-'+realIdx+'\',\'h3\')" title="Heading">H</button>';
+      html+='<button class="rte-btn" onclick="rteCmd(\'fea-'+si+'-'+realIdx+'\',\'formatBlock\',\'blockquote\')" title="Note block">❝</button>';
+      html+='<button class="rte-btn" onclick="rteCmd(\'fea-'+si+'-'+realIdx+'\',\'removeFormat\')" title="Clear format">✕ fmt</button>';
+      html+='<div class="rte-sep"></div>';
+      html+='<label class="rte-btn" style="cursor:pointer" title="Insert image">📷 Image<input type="file" accept="image/*" multiple style="display:none" onchange="rteInsertImages(\'fea-'+si+'-'+realIdx+'\',this)"></label>';
+      html+='</div>';
+      html+='<div class="rte-editor" id="fea-'+si+'-'+realIdx+'" contenteditable="true">'+sanitizeHtml(item.a)+'</div>';
+      html+='</div></div>';
       html+='<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">';
       html+='<button class="btn btn-primary btn-sm" onclick="saveFaqItem('+si+','+realIdx+')">Save</button>';
       html+='<button class="btn btn-danger btn-sm" onclick="closeFaqEdit('+si+','+realIdx+')">Cancel</button>';
       html+='<label style="font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer">';
       html+='<input type="checkbox" id="few-'+si+'-'+realIdx+'"'+(item.warn?' checked':'')+'>  Escalate to Emina</label>';
-      html+='<label class="btn btn-green btn-sm" style="cursor:pointer">📷 Add Screenshot';
-      html+='<input type="file" accept="image/*" multiple style="display:none" onchange="uploadFaqImg('+si+','+realIdx+',this)">';
-      html+='</label>';
       html+='</div></div></div>';
     }
     html+='</div>';
@@ -680,6 +758,83 @@ function deleteFaqSection(si){
 }
 
 
+
+// ── PASSWORD ──────────────────────────────────────────────────────────────
+const SITE_PASSWORD='forework2026';
+function checkPw(){
+  var pw=document.getElementById('pw-input').value.trim();
+  var errEl=document.getElementById('pw-err');
+  var loginEl=document.getElementById('login-screen');
+  if(pw===SITE_PASSWORD){
+    sessionStorage.setItem('fw_auth','1');
+    loginEl.style.display='none';
+  } else {
+    errEl.style.display='block';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+function checkAuth(){
+  var loginEl=document.getElementById('login-screen');
+  if(sessionStorage.getItem('fw_auth')==='1'){
+    loginEl.style.display='none';
+  } else {
+    setTimeout(function(){document.getElementById('pw-input').focus();},100);
+  }
+}
+
+// ── RICH TEXT EDITOR ──────────────────────────────────────────────────────
+function rteCmd(id,cmd,val){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.focus();
+  document.execCommand(cmd,false,val||null);
+}
+function rteHeading(id,tag){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.focus();
+  document.execCommand('formatBlock',false,tag);
+}
+function rteInsertImages(id,input){
+  var el=document.getElementById(id);
+  if(!el||!input.files.length)return;
+  Array.from(input.files).forEach(function(file){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      el.focus();
+      var img=document.createElement('img');
+      img.src=e.target.result;
+      img.style.maxWidth='100%';
+      img.style.cursor='pointer';
+      img.onclick=function(){openImgModal(this.src);};
+      var sel=window.getSelection();
+      if(sel&&sel.rangeCount){
+        var range=sel.getRangeAt(0);
+        range.collapse(false);
+        range.insertNode(img);
+        range.setStartAfter(img);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } else {
+        el.appendChild(img);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function sanitizeHtml(str){
+  if(!str)return '';
+  // If it's plain text (legacy), convert newlines to <br>
+  if(str.indexOf('<')===-1){
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  }
+  return str;
+}
+function handleFaqImgClick(e){
+  if(e.target.tagName==='IMG'){openImgModal(e.target.src);}
+}
+
 // ── SCREENSHOTS ───────────────────────────────────────────────────────────
 function openImgModal(src){
   document.getElementById('img-modal-src').src=src;
@@ -716,7 +871,9 @@ function deleteFaqImg(si,ii,imgIdx){
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 async function init(){
+  checkAuth();
   setSyncStatus('saving','Loading...');
+  try{
   document.getElementById('today-header').textContent=todayLabel();
   document.getElementById('checklist-date').textContent=todayLabel();
 
@@ -735,10 +892,18 @@ async function init(){
   await renderHolidays();
   loadTemplates();renderTemplates();
   renderChecklist();
-  loadFaq();renderFaq();
+  loadFaq();renderFaqFilters();renderFaq();
 
   document.getElementById('edit-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
   document.getElementById('tpl-modal').addEventListener('click',function(e){if(e.target===this)closeTplModal();});
+  }catch(e){
+    console.error('Init error:',e);
+    setSyncStatus('err','Error: '+e.message);
+    // Still load local data even if Supabase fails
+    loadTemplates();renderTemplates();
+    renderChecklist();
+    loadFaq();renderFaqFilters();renderFaq();
+  }
 }
 init();
 </script>
